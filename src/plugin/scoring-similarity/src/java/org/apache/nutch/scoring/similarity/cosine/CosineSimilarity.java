@@ -25,6 +25,7 @@ import org.apache.hadoop.io.Text;
 import org.apache.hadoop.util.StringUtils;
 import org.apache.nutch.crawl.CrawlDatum;
 import org.apache.nutch.metadata.Nutch;
+import org.apache.nutch.parse.Outlink;
 import org.apache.nutch.parse.Parse;
 import org.apache.nutch.parse.ParseData;
 import org.apache.nutch.protocol.Content;
@@ -35,6 +36,7 @@ import org.slf4j.LoggerFactory;
 public class CosineSimilarity implements SimilarityModel{
 
   private Configuration conf; 
+  private String p_text="";
   private final static Logger LOG = LoggerFactory
       .getLogger(CosineSimilarity.class);
 
@@ -53,10 +55,24 @@ public class CosineSimilarity implements SimilarityModel{
       }
       String metatags = parse.getData().getParseMeta().get("metatag.keyword");
       String metaDescription = parse.getData().getParseMeta().get("metatag.description");
+      
+      String title = parse.getData().getTitle();
+      Outlink[] outlinks = parse.getData().getOutlinks();
+      String anchor = "";
+      for(Outlink out:outlinks)
+      {
+    	 anchor +=out.getAnchor();
+      }
+      String first_p_text = metaDescription+metatags+title;
+      String second_p_text = anchor;
+      
+      p_text = first_p_text + second_p_text; //need to update goldstandard
+           
       int[] ngramArr = Model.retrieveNgrams(conf);
       int mingram = ngramArr[0];
       int maxgram = ngramArr[1];
-      DocVector docVector = Model.createDocVector(parse.getText()+metaDescription+metatags, mingram, maxgram);
+      //DocVector docVector = Model.createDocVector(parse.getText()+metaDescription+metatags, mingram, maxgram);
+      DocVector docVector = Model.createDocVector(parse.getText()+getWeightedText(first_p_text, 5)+getWeightedText(second_p_text, 3), mingram, maxgram);
       if(docVector!=null){
         score = Model.computeCosineSimilarity(docVector);
         LOG.info("Setting score of {} to {}",url, score);
@@ -69,7 +85,17 @@ public class CosineSimilarity implements SimilarityModel{
     }
     return score;
   }
-
+  
+  public String getWeightedText(String text, int weight)
+  {
+	  String WeightedText = "";
+	  for(int i=0; i<weight; i++)
+	  {
+		  WeightedText += text;
+	  }
+	  return WeightedText;
+  }
+  
   @Override
   public CrawlDatum distributeScoreToOutlinks(Text fromUrl, ParseData parseData,
       Collection<Entry<Text, CrawlDatum>> targets, CrawlDatum adjust,
