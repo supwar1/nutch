@@ -141,6 +141,22 @@ public class ParseSegment extends NutchTool implements Tool,
           LOG.warn("Error passing score: " + url + ": " + e.getMessage());
         }
       }
+      
+      /*****/
+      String metatags = parse.getData().getParseMeta().get("metatag.keyword");
+      String metaDescription = parse.getData().getParseMeta().get("metatag.description");
+      String title = parse.getData().getTitle();
+      Outlink[] outlinks = parse.getData().getOutlinks();
+      String anchor = "";
+      for(Outlink out:outlinks)
+      {
+    	 anchor +=out.getAnchor();
+      }
+      String first_p_text = metaDescription+metatags+title;
+      String second_p_text = anchor;     
+      String p_text = first_p_text + second_p_text; //need to update goldstandard      
+      parse.getData().setPrioritedText(p_text);
+      /****/
 
       long end = System.currentTimeMillis();
       LOG.info("Parsed (" + Long.toString(end - start) + "ms):" + url);

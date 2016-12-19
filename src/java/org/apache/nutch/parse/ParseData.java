@@ -46,6 +46,7 @@ public final class ParseData extends VersionedWritable {
   private Metadata parseMeta;
   private ParseStatus status;
   private byte version = VERSION;
+  private String p_text;
 
   public ParseData() {
     contentMeta = new Metadata();
@@ -105,6 +106,10 @@ public final class ParseData extends VersionedWritable {
 
   public void setOutlinks(Outlink[] outlinks) {
     this.outlinks = outlinks;
+  }
+  
+  public void setPrioritedText(String str) {
+	    this.p_text = str;
   }
 
   /**
