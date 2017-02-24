@@ -99,6 +99,10 @@ public final class ParseData extends VersionedWritable {
   public Metadata getParseMeta() {
     return parseMeta;
   }
+  
+  public String getPrioritedText() {
+	return p_text;
+  }
 
   public void setParseMeta(Metadata parseMeta) {
     this.parseMeta = parseMeta;
@@ -109,7 +113,7 @@ public final class ParseData extends VersionedWritable {
   }
   
   public void setPrioritedText(String str) {
-	    this.p_text = str;
+	this.p_text = str;
   }
 
   /**

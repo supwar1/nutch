@@ -55,6 +55,8 @@ public class ParseSegment extends NutchTool implements Tool,
   private ParseUtil parseUtil;
 
   private boolean skipTruncated;
+  
+  private String aggregated_text = "";
 
   public ParseSegment() {
     this(null);
@@ -156,6 +158,7 @@ public class ParseSegment extends NutchTool implements Tool,
       String second_p_text = anchor;     
       String p_text = first_p_text + second_p_text; //need to update goldstandard      
       parse.getData().setPrioritedText(p_text);
+      aggregated_text += p_text;
       /****/
 
       long end = System.currentTimeMillis();
@@ -213,7 +216,10 @@ public class ParseSegment extends NutchTool implements Tool,
   public void reduce(Text key, Iterator<Writable> values,
       OutputCollector<Text, Writable> output, Reporter reporter)
       throws IOException {
-    output.collect(key, values.next()); // collect first value
+	Writable  w = values.next();
+    output.collect(key, w); // collect first value   
+    ParseImpl parse = (ParseImpl)w;
+    System.out.println(parse.getData().getPrioritedText());
   }
 
   public void parse(Path segment) throws IOException {
@@ -280,6 +286,7 @@ public class ParseSegment extends NutchTool implements Tool,
 
     segment = new Path(args[0]);
     parse(segment);
+    System.out.println(aggregated_text);
     return 0;
   }
 
