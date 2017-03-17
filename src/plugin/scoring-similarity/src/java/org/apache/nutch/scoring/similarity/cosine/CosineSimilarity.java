@@ -16,6 +16,7 @@
  */
 package org.apache.nutch.scoring.similarity.cosine;
 
+import java.lang.invoke.MethodHandles;
 import java.io.IOException;
 import java.util.Collection;
 import java.util.Map.Entry;
@@ -35,10 +36,16 @@ import org.slf4j.LoggerFactory;
 
 public class CosineSimilarity implements SimilarityModel{
 
+<<<<<<< HEAD
   private Configuration conf; 
   private String p_text="";
   private final static Logger LOG = LoggerFactory
       .getLogger(CosineSimilarity.class);
+=======
+  private Configuration conf;
+  private static final Logger LOG = LoggerFactory
+      .getLogger(MethodHandles.lookup().lookupClass());
+>>>>>>> apache/master
 
   @Override
   public void setConf(Configuration conf) {
