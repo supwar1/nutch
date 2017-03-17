@@ -40,6 +40,7 @@ import java.io.*;
 import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.Map.Entry;
+import java.util.concurrent.atomic.AtomicReference;
 
 /* Parse content in a segment. */
 public class ParseSegment extends NutchTool implements Tool,
@@ -56,7 +57,9 @@ public class ParseSegment extends NutchTool implements Tool,
 
   private boolean skipTruncated;
   
-  private String aggregated_text = "";
+  private static AtomicReference<String> aggregated_text =
+      new AtomicReference<String>("");
+  //private static Atomic aggregated_text = "";
 
   public ParseSegment() {
     this(null);
@@ -154,11 +157,17 @@ public class ParseSegment extends NutchTool implements Tool,
       {
     	 anchor +=out.getAnchor();
       }
-      String first_p_text = metaDescription+metatags+title;
-      String second_p_text = anchor;     
-      String p_text = first_p_text + second_p_text; //need to update goldstandard      
-      parse.getData().setPrioritedText(p_text);
-      aggregated_text += p_text;
+//      String first_p_text = metaDescription+metatags+title;
+//      String second_p_text = anchor;     
+//      String p_text = first_p_text + second_p_text; //need to update goldstandard  
+      String p_text = title;
+//      parse.getData().setPrioritedText(p_text);
+      
+      String separator = "";
+      if(!aggregated_text.get().equals(""))
+        separator = "\n";
+        
+      aggregated_text.set(aggregated_text.get() + separator + p_text);
       /****/
 
       long end = System.currentTimeMillis();
@@ -219,7 +228,7 @@ public class ParseSegment extends NutchTool implements Tool,
 	Writable  w = values.next();
     output.collect(key, w); // collect first value   
     ParseImpl parse = (ParseImpl)w;
-    System.out.println(parse.getData().getPrioritedText());
+    //System.out.println(parse.getData().getPrioritedText());
   }
 
   public void parse(Path segment) throws IOException {
@@ -259,6 +268,7 @@ public class ParseSegment extends NutchTool implements Tool,
   public static void main(String[] args) throws Exception {
     int res = ToolRunner.run(NutchConfiguration.create(), new ParseSegment(),
         args);
+    //System.out.println(aggregated_text.get());
     System.exit(res);
   }
 
@@ -286,7 +296,16 @@ public class ParseSegment extends NutchTool implements Tool,
 
     segment = new Path(args[0]);
     parse(segment);
-    System.out.println(aggregated_text);
+    System.out.println(aggregated_text.get());
+    
+    //add the output file path here
+//    try (BufferedWriter bw = new BufferedWriter(new FileWriter("filepath"))) {      
+//      bw.write(aggregated_text.get());
+//      bw.close();
+//    } catch (IOException e) {
+//      e.printStackTrace();
+//    }
+        
     return 0;
   }
 

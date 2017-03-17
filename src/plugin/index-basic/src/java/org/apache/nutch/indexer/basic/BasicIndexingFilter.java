@@ -21,6 +21,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import org.apache.nutch.metadata.Nutch;
+import org.apache.nutch.parse.Outlink;
 import org.apache.nutch.parse.Parse;
 
 import org.apache.nutch.indexer.IndexingFilter;
@@ -134,6 +135,20 @@ public class BasicIndexingFilter implements IndexingFilter {
 
     // add timestamp when fetched, for deduplication
     doc.add("tstamp", new Date(datum.getFetchTime()));
+    
+    // add anchor text of outlinks, if any
+    Outlink[] outlinks = parse.getData().getOutlinks();
+    String anchor_outlinks = "";
+    for(Outlink out:outlinks)
+    {
+      anchor_outlinks +=out.getAnchor() + "&&";
+    }
+    
+    doc.add("anchor_outlinks", anchor_outlinks);
+    
+    // add score
+    doc.add("nutch_score", datum.getScore());
+    
 
     return doc;
   }

@@ -18,3 +18,5 @@ urls/
 *.log
 
 
+
+hadoop.log.*
