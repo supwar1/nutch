@@ -14,9 +14,7 @@ logs/
 cody/
 crawl/
 ivy/
-urls/
 *.log
-
-
-
 hadoop.log.*
+
+!conf/nutch-site.xml

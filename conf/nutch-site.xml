@@ -1,0 +1,62 @@
+<?xml version="1.0"?>
+<?xml-stylesheet type="text/xsl" href="configuration.xsl"?>
+
+<!-- Put site-specific property overrides in this file. -->
+
+<configuration>
+<property>
+ <name>http.agent.name</name>
+ <value>My Nutch Spider</value>
+</property>
+
+<property>
+   <name>plugin.folders</name>
+   <value>/Users/yjiang/Documents/workspace/nutch/build/plugins</value>
+ </property>
+
+<property>
+  <name>plugin.includes</name>
+  <value>protocol-http|urlfilter-regex|parse-(tika)|index-(anchor|basic|more|static|replace)|indexer-elastic|urlnormalizer-basic|scoring-opic</value>
+</property>
+
+<property>
+    <name>cosine.goldstandard.file</name>
+    <value>goldstandard.txt</value>
+</property>
+
+<property>
+    <name>scoring.similarity.stopword.file</name>
+    <value>stopwords.txt</value>
+</property>
+
+
+
+<property>
+  <name>elastic.host</name>
+  <value>localhost</value>
+  <description>The hostname to send documents to using TransportClient. Either host
+  and port must be defined or cluster.</description>
+</property>
+
+<property>
+  <name>elastic.port</name>
+  <value>9300</value>
+  <description>
+  </description>
+</property>
+
+<property>
+  <name>elastic.cluster</name>
+  <value>elasticsearch</value>
+  <description>The cluster name to discover. Either host and potr must be defined
+  or cluster.</description>
+</property>
+
+<property>
+  <name>elastic.index</name>
+  <value>nutch</value>
+  <description>Default index to send documents to.</description>
+</property>
+
+
+</configuration>
