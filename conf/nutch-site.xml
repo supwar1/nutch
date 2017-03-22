@@ -16,7 +16,7 @@
 
 <property>
   <name>plugin.includes</name>
-  <value>protocol-http|urlfilter-regex|parse-(tika)|index-(anchor|basic|more|static|replace)|indexer-elastic|urlnormalizer-basic|scoring-opic</value>
+  <value>protocol-http|urlfilter-regex|parse-(tika)|index-(anchor|basic|more|static|replace)|indexer-elastic|urlnormalizer-basic|scoring-similarity</value>
 </property>
 
 <property>
