@@ -299,14 +299,6 @@ public class ParseSegment extends NutchTool implements Tool,
     segment = new Path(args[0]);
     parse(segment);
     System.out.println(aggregated_text.get());
-    
-    //add the output file path here
-//    try (BufferedWriter bw = new BufferedWriter(new FileWriter("filepath"))) {      
-//      bw.write(aggregated_text.get());
-//      bw.close();
-//    } catch (IOException e) {
-//      e.printStackTrace();
-//    }
         
     return 0;
   }

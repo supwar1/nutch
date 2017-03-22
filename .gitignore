@@ -18,3 +18,4 @@ ivy/
 hadoop.log.*
 
 !conf/nutch-site.xml
+!conf/goldstandard.txt

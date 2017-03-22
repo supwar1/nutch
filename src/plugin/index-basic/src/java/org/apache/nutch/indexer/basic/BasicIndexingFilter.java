@@ -23,7 +23,6 @@ import org.slf4j.LoggerFactory;
 import org.apache.nutch.metadata.Nutch;
 import org.apache.nutch.parse.Outlink;
 import org.apache.nutch.parse.Parse;
-
 import org.apache.nutch.indexer.IndexingFilter;
 import org.apache.nutch.indexer.IndexingException;
 import org.apache.nutch.indexer.NutchDocument;
@@ -34,6 +33,10 @@ import org.apache.hadoop.io.Text;
 import org.apache.nutch.crawl.CrawlDatum;
 import org.apache.nutch.crawl.Inlinks;
 
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.lang.invoke.MethodHandles;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -150,7 +153,34 @@ public class BasicIndexingFilter implements IndexingFilter {
     // add score
     doc.add("nutch_score", datum.getScore());
     
-
+//    BufferedWriter bw = null;
+//    FileWriter fw = null;
+//    
+//    try{
+//    File file = new File("/Users/yjiang/Documents/test.txt");
+//    if(!file.exists())
+//    {
+//      file.createNewFile();
+//    }
+//    fw = new FileWriter(file.getAbsolutePath(), true);
+//    bw = new BufferedWriter(fw);
+//    
+//    bw.write("1");
+//    } catch(IOException e)
+//    {
+//      e.printStackTrace();
+//    }finally{
+//      try{
+//        if(bw!=null)
+//          bw.close();
+//        if(fw!=null)
+//          fw.close();
+//         } catch (IOException ex){
+//           ex.printStackTrace();
+//         }
+//    }
+ 
+    
     return doc;
   }
 
