@@ -17,11 +17,16 @@
 package org.apache.nutch.indexer.anchor;
 
 import java.lang.invoke.MethodHandles;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.HashSet;
+import java.util.Iterator;
+import java.util.Set;
 
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.io.Text;
 import org.apache.nutch.crawl.CrawlDatum;
+import org.apache.nutch.crawl.Inlink;
 import org.apache.nutch.crawl.Inlinks;
 import org.apache.nutch.indexer.IndexingException;
 import org.apache.nutch.indexer.IndexingFilter;
@@ -84,10 +89,22 @@ public class AnchorIndexingFilter implements IndexingFilter {
     String[] anchors = (inlinks != null ? inlinks.getAnchors() : new String[0]);
 
     String anchor_inlinks = "";
+    String inlink_urls = "";
     for (int i = 0; i < anchors.length; i++) {
-      anchor_inlinks += anchors[i] + "&&";      
+      anchor_inlinks += anchors[i] + "&&";
     }
     doc.add("anchor_inlinks", anchor_inlinks); //need to be changed
+    
+    if (null != inlinks) {
+      Iterator<Inlink> iterator = inlinks.iterator();
+
+      while (iterator.hasNext()) {
+          Inlink link = iterator.next();
+          String linkUrl = link.getFromUrl();
+          inlink_urls = linkUrl + "&&&&";
+      }
+      doc.add("url_inlinks", inlink_urls);
+    }
     
     return doc;
   }

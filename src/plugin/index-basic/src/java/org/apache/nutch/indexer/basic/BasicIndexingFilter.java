@@ -143,12 +143,16 @@ public class BasicIndexingFilter implements IndexingFilter {
     // add anchor text of outlinks, if any
     Outlink[] outlinks = parse.getData().getOutlinks();
     String anchor_outlinks = "";
+    String outlink_urls = "";
+
     for(Outlink out:outlinks)
     {
       anchor_outlinks +=out.getAnchor() + "&&";
+      outlink_urls = out.getToUrl() + "&&&&";
     }
     
     doc.add("anchor_outlinks", anchor_outlinks);
+    doc.add("url_outlinks", outlink_urls);
     
     // add score
     doc.add("nutch_score", datum.getScore());

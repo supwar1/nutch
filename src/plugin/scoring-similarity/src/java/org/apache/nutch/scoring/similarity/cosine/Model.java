@@ -80,6 +80,8 @@ public class Model {
       String line;
       StringBuilder sb = new StringBuilder();
       BufferedReader br = new BufferedReader(conf.getConfResourceAsReader((conf.get("cosine.goldstandard.file"))));
+      
+      //can be revised
       while ((line = br.readLine()) != null) {
         sb.append(line);
       }

@@ -89,6 +89,7 @@ public class LinksIndexingFilter implements IndexingFilter {
 
     if (outlinks != null) {
       Set<String> hosts = new HashSet<String>();
+      String outlink_urls = "";
 
       for (Outlink outlink : outlinks) {
         try {
@@ -104,18 +105,21 @@ public class LinksIndexingFilter implements IndexingFilter {
             hosts.add(linkUrl);
           }
 
-          addFilteredLink("outlinks", url.toString(), linkUrl, outHost,
-              filterOutlinks, doc);
+//          addFilteredLink("outlinks", url.toString(), linkUrl, outHost,
+//              filterOutlinks, doc);
+          outlink_urls = linkUrl + "&&&&";
         } catch (MalformedURLException e) {
           LOG.error("Malformed URL in {}: {}", url, e.getMessage());
         }
       }
+      doc.add("url_outlinks", outlink_urls);
     }
 
     // Add the inlinks
     if (null != inlinks) {
       Iterator<Inlink> iterator = inlinks.iterator();
       Set<String> inlinkHosts = new HashSet<String>();
+      String inlink_urls = "";
 
       while (iterator.hasNext()) {
         try {
@@ -132,12 +136,14 @@ public class LinksIndexingFilter implements IndexingFilter {
             inlinkHosts.add(linkUrl);
           }
 
-          addFilteredLink("inlinks", url.toString(), linkUrl, inHost,
-              filterInlinks, doc);
+//          addFilteredLink("inlinks", url.toString(), linkUrl, inHost,
+//              filterInlinks, doc);
+          inlink_urls = linkUrl + "&&&&";
         } catch (MalformedURLException e) {
           LOG.error("Malformed URL in {}: {}", url, e.getMessage());
         }
       }
+      doc.add("url_inlinks", inlink_urls);
     }
 
     return doc;
