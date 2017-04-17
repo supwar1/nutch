@@ -16,7 +16,7 @@
 
 <property>
   <name>plugin.includes</name>
-  <value>protocol-http|urlfilter-regex|parse-(tika)|index-(anchor|basic|more|static|replace)|indexer-elastic|urlnormalizer-basic|scoring-similarity</value>
+  <value>protocol-http|urlfilter-regex|parse-(tika)|index-(anchor|basic|more|static|replace|links)|indexer-elastic|urlnormalizer-basic|scoring-similarity|language-identifier</value>
 </property>
 
 <property>
@@ -30,6 +30,27 @@
 </property>
 
 
+<!-- minimum score -->
+<property>
+  <name>generate.min.score</name>
+  <value>0.05</value>
+  <description>Select only entries with a score larger than
+  generate.min.score.</description>
+</property>
+
+<!-- link structure -->
+<property>
+  <name>linkdb.ignore.internal.links</name>
+  <value>true</value>
+  <description>If true, when adding new links to a page, links from
+  the same host are ignored.  This is an effective way to limit the
+  size of the link database, keeping only the highest quality
+  links.
+  </description>
+</property>
+
+
+<!-- performance-->
 <property>
   <name>fetcher.threads.fetch</name>
   <value>20</value>
@@ -41,7 +62,7 @@
 </property>
 
 
-
+<!-- indexing-->
 <property>
   <name>elastic.host</name>
   <value>localhost</value>
