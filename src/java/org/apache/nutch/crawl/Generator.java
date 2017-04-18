@@ -227,6 +227,8 @@ public class Generator extends NutchTool implements Tool {
               .getStatusName(crawlDatum.getStatus())))
         return;
 
+      LOG.info(String.valueOf(sort)); //added by Cody
+      
       // consider only entries with a score superior to the threshold
       if (scoreThreshold != Float.NaN && sort < scoreThreshold)
         return;

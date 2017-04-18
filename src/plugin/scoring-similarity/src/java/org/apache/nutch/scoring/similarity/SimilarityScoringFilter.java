@@ -67,4 +67,11 @@ public class SimilarityScoringFilter extends AbstractScoringFilter {
     similarityModel.distributeScoreToOutlinks(fromUrl, parseData, targets, adjust, allCount);
     return adjust;
   }
+  
+  //added by Cody
+  @Override
+  public float generatorSortValue(Text url, CrawlDatum datum, float initSort)
+      throws ScoringFilterException {
+    return datum.getScore();
+  }
 }

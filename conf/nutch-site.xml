@@ -33,21 +33,19 @@
 <!-- minimum score -->
 <property>
   <name>generate.min.score</name>
-  <value>0.05</value>
-  <description>Select only entries with a score larger than
-  generate.min.score.</description>
+  <value>0.0001</value>
 </property>
 
 <!-- link structure -->
 <property>
   <name>linkdb.ignore.internal.links</name>
-  <value>true</value>
+  <value>false</value>
   <description>If true, when adding new links to a page, links from
   the same host are ignored.  This is an effective way to limit the
   size of the link database, keeping only the highest quality
   links.
   </description>
-</property>
+</property> 
 
 
 <!-- performance-->

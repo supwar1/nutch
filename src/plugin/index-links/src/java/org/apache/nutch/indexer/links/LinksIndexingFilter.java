@@ -26,11 +26,8 @@ import org.apache.nutch.indexer.IndexingFilter;
 import org.apache.nutch.indexer.NutchDocument;
 import org.apache.nutch.parse.Outlink;
 import org.apache.nutch.parse.Parse;
-
-import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.lang.invoke.MethodHandles;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.HashSet;
@@ -72,8 +69,8 @@ public class LinksIndexingFilter implements IndexingFilter {
   public final static String LINKS_INLINKS_HOST = "index.links.inlinks.host.ignore";
   public final static String LINKS_ONLY_HOSTS = "index.links.hosts.only";
 
-  private static final Logger LOG = LoggerFactory
-      .getLogger(MethodHandles.lookup().lookupClass());
+  public final static org.slf4j.Logger LOG = LoggerFactory
+      .getLogger(LinksIndexingFilter.class);
 
   private Configuration conf;
   private boolean filterOutlinks;
@@ -89,7 +86,6 @@ public class LinksIndexingFilter implements IndexingFilter {
 
     if (outlinks != null) {
       Set<String> hosts = new HashSet<String>();
-      String outlink_urls = "";
 
       for (Outlink outlink : outlinks) {
         try {
@@ -105,21 +101,18 @@ public class LinksIndexingFilter implements IndexingFilter {
             hosts.add(linkUrl);
           }
 
-//          addFilteredLink("outlinks", url.toString(), linkUrl, outHost,
-//              filterOutlinks, doc);
-          outlink_urls = linkUrl + "&&&&";
+          addFilteredLink("outlinks", url.toString(), linkUrl, outHost,
+              filterOutlinks, doc);
         } catch (MalformedURLException e) {
           LOG.error("Malformed URL in {}: {}", url, e.getMessage());
         }
       }
-      doc.add("url_outlinks", outlink_urls);
     }
 
     // Add the inlinks
     if (null != inlinks) {
       Iterator<Inlink> iterator = inlinks.iterator();
       Set<String> inlinkHosts = new HashSet<String>();
-      String inlink_urls = "";
 
       while (iterator.hasNext()) {
         try {
@@ -136,14 +129,12 @@ public class LinksIndexingFilter implements IndexingFilter {
             inlinkHosts.add(linkUrl);
           }
 
-//          addFilteredLink("inlinks", url.toString(), linkUrl, inHost,
-//              filterInlinks, doc);
-          inlink_urls = linkUrl + "&&&&";
+          addFilteredLink("inlinks", url.toString(), linkUrl, inHost,
+              filterInlinks, doc);
         } catch (MalformedURLException e) {
           LOG.error("Malformed URL in {}: {}", url, e.getMessage());
         }
       }
-      doc.add("url_inlinks", inlink_urls);
     }
 
     return doc;
