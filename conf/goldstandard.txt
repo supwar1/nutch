@@ -44,8 +44,11 @@ outer space,3
 giant asteroid,3
 esa asteroid micro lander,3
 ida dactyl,3
+iau,3
+neo mitig,3
+nasa deep space network,3
+nasa asteroid sampler,3
 dwarf planet nasa set,2
-nasa jet,2
 earth object,2
 esa concordia,2
 soyuz tma,2
@@ -57,7 +60,7 @@ comet asteroid,2
 impact last alert system,2
 kuiper belt,2
 space pioneer act,2
-bennu back,2
+bennu,2
 space,2
 asteroid track,2
 solar system,2
@@ -91,7 +94,132 @@ asteroid blast hit russia,2
 asteroid earth,2
 mm spacecraft,2
 fujita scale,2
-nasa,2
 hit earth,2
 asteroid comet,2
 rex mission,2
+plum brook,1
+sl program,1
+pluto charon,1
+spacecraft asteroid,1
+spacecraft,1
+list asteroid close,1
+mission watch,1
+nasa kepler,1
+great meteor,1
+confront asteroid,1
+nasa project,1
+make close approach earth,1
+defend earth asteroid strike,1
+sun earth,1
+asteroid broke,1
+orbit earth,1
+earth moon,1
+around sun,1
+nasa launch,1
+impact earth,1
+whiff dark matter iss,1
+widmanst tten pattern,1
+rocket road trip,1
+largest asteroid,1
+space gp,1
+mission option,1
+moon dysnomia,1
+earth first trojan asteroid,1
+launcher project,1
+past earth,1
+canadian space,1
+neptunian object,1
+assess danger,1
+proto planet,1
+nasa new asteroid alert,1
+asteroid near miss,1
+uk space,1
+minor planet,1
+orbit around,1
+asteroid redirect mission report,1
+asteroid day,1
+impact threat,1
+pluto system,1
+asteroid miss,1
+russian meteor,1
+earth near miss,1
+lunar orbit,1
+saturn,1
+impact risk,1
+new space,1
+redirect asteroid,1
+outer planet,1
+asteroid origin,1
+space law,1
+solar transit,1
+univers,1
+around asteroid,1
+space threat,1
+dim asteroid hit earth,1
+rosetta death dive comet,1
+utopia planitia,1
+dawn spacecraft,1
+cygnu cargo,1
+momentum space,1
+find asteroid,1
+asteroid focu,1
+space junk,1
+deflect killer,1
+telescop,1
+protect earth,1
+return mission,1
+space system,1
+asteroid pass near earth,1
+black hole,1
+pray sugarloaf,1
+comet tail,1
+space earth,1
+mar,1
+earth impact,1
+cosmic neighborhood,1
+redirect mission,1
+asteroid hit,1
+nebula sea,1
+name asteroid,1
+mission iss,1
+johnson space center,1
+observatori,1
+orion em,1
+mauna kea,1
+asteroid program,1
+planet,1
+deepspaceindustri,1
+jupit,1
+asteroid redirect mission may,1
+succeed asteroid,1
+la sci sn asteroid,1
+impact hazard,1
+comet,1
+found never seen asteroid,1
+moon,1
+planet,1
+asteroid survey,1
+new millennium program,1
+scope space,1
+comet churyumov gerasimenko,1
+europa mission,1
+look defend earth q,1
+planet mission,1
+meteor,1
+nasa mission,1
+asteroid strike,1
+space ground,1
+cneo,1
+radio space,1
+martian dust,1
+solar system data,1
+human mission asteroid,1
+crucial next wave space,1
+solar wind,1
+astronaut sleep,1
+detect track,1
+nasa juno,1
+asteroid today,1
+asteriod threat,1
+avoid asteroid,1
+saturn moon,1

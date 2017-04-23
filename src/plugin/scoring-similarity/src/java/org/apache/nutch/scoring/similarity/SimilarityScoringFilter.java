@@ -17,6 +17,7 @@
 package org.apache.nutch.scoring.similarity;
 
 import java.util.Collection;
+import java.util.List;
 import java.util.Map.Entry;
 
 import org.apache.hadoop.conf.Configuration;
@@ -73,4 +74,21 @@ public class SimilarityScoringFilter extends AbstractScoringFilter {
       throws ScoringFilterException {
     return datum.getScore();
   }
+  
+  /** Increase the score by a sum of inlinked scores. */
+//  public void updateDbScore(Text url, CrawlDatum old, CrawlDatum datum,
+//      List<CrawlDatum> inlinked) throws ScoringFilterException {
+//    float adjust = 0.0f;
+//    for (int i = 0; i < inlinked.size(); i++) {
+//      CrawlDatum linked = inlinked.get(i);
+//      if(linked.getScore() > adjust)
+//         adjust = linked.getScore();
+//    }
+//    if (old == null)
+//      old = datum;
+//    
+//    if(old.getScore() > adjust)
+//      adjust = old.getScore();
+//    datum.setScore(adjust);
+//  }
 }

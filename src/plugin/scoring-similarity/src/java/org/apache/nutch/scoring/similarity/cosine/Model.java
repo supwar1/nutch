@@ -111,6 +111,9 @@ public class Model {
    * @param maxgram Value of maxgram for tokenizing
    */
   public static DocVector createDocVector(String content, int mingram, int maxgram) {
+    if(content == null || content.equals(""))
+      return null;
+    
     LuceneTokenizer tokenizer;
 
     if(mingram > 1 && maxgram > 1){
@@ -192,8 +195,9 @@ public class Model {
     float maxScore = 0;
     for(DocVector corpusDoc : docVectors) {
       float numerator = docVector.dotProduct(corpusDoc);
-      float denominator = docVector.getL2Norm()*corpusDoc.getL2Norm();
-      float currentScore = numerator/denominator;
+//      float denominator = docVector.getL2Norm()*corpusDoc.getL2Norm();
+//      float currentScore = numerator/denominator;
+      float currentScore = numerator;
       scores[i++] = currentScore;
       maxScore = (currentScore>maxScore)? currentScore : maxScore;
     }
