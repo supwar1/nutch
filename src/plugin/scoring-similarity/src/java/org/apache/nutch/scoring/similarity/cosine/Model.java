@@ -113,8 +113,11 @@ public class Model {
   public static DocVector createDocVector(String content, int mingram, int maxgram) {
     LuceneTokenizer tokenizer;
 
-    //revised by cody
-    if(maxgram > 1){
+    if(mingram > 1 && maxgram > 1){
+      LOG.info("Using Ngram Cosine Model, user specified mingram value : {} maxgram value : {}", mingram, maxgram);
+      tokenizer = new LuceneTokenizer(content, TokenizerType.STANDARD, StemFilterType.PORTERSTEM_FILTER, mingram, maxgram);
+    } else if (mingram > 1) {
+      maxgram = mingram;
       LOG.info("Using Ngram Cosine Model, user specified mingram value : {} maxgram value : {}", mingram, maxgram);
       tokenizer = new LuceneTokenizer(content, TokenizerType.STANDARD, StemFilterType.PORTERSTEM_FILTER, mingram, maxgram);
     }
@@ -122,10 +125,23 @@ public class Model {
       tokenizer = new LuceneTokenizer(content, TokenizerType.STANDARD, stopWords, true, 
           StemFilterType.PORTERSTEM_FILTER);
     }
-    else{
+    else {
       tokenizer = new LuceneTokenizer(content, TokenizerType.STANDARD, true, 
           StemFilterType.PORTERSTEM_FILTER);
     }
+    
+    //added by cody
+    LuceneTokenizer tokenizer_bow;
+    if(stopWords!=null) {
+      tokenizer_bow = new LuceneTokenizer(content, TokenizerType.STANDARD, stopWords, true, 
+          StemFilterType.PORTERSTEM_FILTER);
+    }else {
+      tokenizer_bow = new LuceneTokenizer(content, TokenizerType.STANDARD, true, 
+          StemFilterType.PORTERSTEM_FILTER);
+    }
+    TokenStream tStream_bow = tokenizer_bow.getTokenStream();
+    //////////////
+    
     TokenStream tStream = tokenizer.getTokenStream();
     HashMap<String, Integer> termVector = new HashMap<>();
     try {
@@ -143,6 +159,24 @@ public class Model {
           termVector.put(term, 1);
         }
       }
+      
+      //add by cody
+      CharTermAttribute charTermAttribute_bow = tStream_bow.addAttribute(CharTermAttribute.class);
+      tStream_bow.reset();
+      while(tStream_bow.incrementToken()) {
+        String term = charTermAttribute_bow.toString();
+        LOG.debug(term);
+        if(termVector.containsKey(term)) {
+          int count = termVector.get(term);
+          count++;
+          termVector.put(term, count);
+        }
+        else {
+          termVector.put(term, 1);
+        }
+      }
+      ///////
+      
       DocVector docVector = new DocVector();
       docVector.setTermFreqVector(termVector);
       return docVector;

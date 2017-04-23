@@ -61,7 +61,6 @@ public class ParseSegment extends NutchTool implements Tool,
   
   private static AtomicReference<String> aggregated_text =
       new AtomicReference<String>("");
-  //private static Atomic aggregated_text = "";
 
   public ParseSegment() {
     this(null);
@@ -150,25 +149,11 @@ public class ParseSegment extends NutchTool implements Tool,
       }
       
       /*****/
-      String metatags = parse.getData().getParseMeta().get("metatag.keyword");
-      String metaDescription = parse.getData().getParseMeta().get("metatag.description");
       String title = parse.getData().getTitle();
-      Outlink[] outlinks = parse.getData().getOutlinks();
-      String anchor = "";
-      for(Outlink out:outlinks)
-      {
-    	 anchor +=out.getAnchor();
-      }
-//      String first_p_text = metaDescription+metatags+title;
-//      String second_p_text = anchor;     
-//      String p_text = first_p_text + second_p_text; //need to update goldstandard  
-      String p_text = title;
-//      parse.getData().setPrioritedText(p_text);
-      
+      String p_text = title;      
       String separator = "";
       if(!aggregated_text.get().equals(""))
-        separator = "\n";
-        
+        separator = "\n";       
       aggregated_text.set(aggregated_text.get() + separator + p_text);
       /****/
 

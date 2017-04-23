@@ -17,6 +17,7 @@
 package org.apache.nutch.scoring.similarity.cosine;
 
 import java.lang.invoke.MethodHandles;
+import java.net.URL;
 import java.io.IOException;
 import java.util.Collection;
 import java.util.Map.Entry;
@@ -52,14 +53,32 @@ public class CosineSimilarity implements SimilarityModel{
       if(!Model.isModelCreated){
         Model.createModel(conf);
       }
-      String metatags = parse.getData().getParseMeta().get("metatag.keyword");
-      String metaDescription = parse.getData().getParseMeta().get("metatag.description");
+      
       int[] ngramArr = Model.retrieveNgrams(conf);
       int mingram = ngramArr[0];
       int maxgram = ngramArr[1];
-      DocVector docVector = Model.createDocVector(parse.getText()+metaDescription+metatags, mingram, maxgram);
-      if(docVector!=null){
-        score = Model.computeCosineSimilarity(docVector);
+      //extract keyword and description
+      String metatags = parse.getData().getParseMeta().get("metatag.keyword");
+      String metaDescription = " " + parse.getData().getParseMeta().get("metatag.description")+ " ";    
+      DocVector docVector = Model.createDocVector(parse.getText()+metaDescription+metatags, mingram, maxgram);      
+      //create title vector
+      String title = parse.getData().getTitle();
+      DocVector titleVector;
+      if(title==null)
+        title = "";
+      titleVector = Model.createDocVector(title, mingram, maxgram);
+      //create url vector      
+      String url_str = url.toString().replace("/", " ").replace(".", " ");
+      DocVector urlVector;
+      if(url_str == null)
+        url_str = "";
+      urlVector = Model.createDocVector(url_str, mingram, maxgram);
+      
+      //field length norm
+      if(docVector!=null && titleVector!=null && urlVector!=null){
+        score = 2*Model.computeCosineSimilarity(titleVector)/5 + 
+                2*Model.computeCosineSimilarity(urlVector)/5 +
+                Model.computeCosineSimilarity(docVector)/5;
         LOG.info("Setting score of {} to {}",url, score);
       }
       else {
@@ -77,6 +96,9 @@ public class CosineSimilarity implements SimilarityModel{
       int allCount) {
     float score = Float.parseFloat(parseData.getContentMeta().get(Nutch.SCORE_KEY));
     for (Entry<Text, CrawlDatum> target : targets) {
+//      String toUrl = target.getKey().toString();
+//      if(toUrl.contains("neo") || toUrl.contains("planet") || toUrl.contains("asteroid"))
+//        score = 3*score/4;
       target.getValue().setScore(score);
     }
     return adjust;

@@ -141,9 +141,18 @@ public class ElasticIndexWriter implements IndexWriter {
       node = nodeBuilder().settings(settings).client(true).node();
       client = node.client();
     }
-
+    
+    //added by Yongyao
+//    String mappingJson = "{\r\n  \"_default_\": {\r\n    \"properties\": {\r\n      \"type\": {\r\n        \"type\": \"string\",\r\n        \"index\": \"not_analyzed\"\r\n      }\r\n    }\r\n  }\r\n}";
+//    putMapping(client, defaultIndex, mappingJson);
+    
     return client;
   }
+  
+//  public void putMapping(Client client, String indexName, String mappingJson) throws IOException {
+//    client.admin().indices().preparePutMapping(indexName).setType("_default_").
+//                             setSource(mappingJson).execute().actionGet();
+//  }
 
   /** Generates a default BulkProcessor.Listener */
   protected BulkProcessor.Listener bulkProcessorListener() {
