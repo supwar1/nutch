@@ -143,7 +143,7 @@ public class Model {
           StemFilterType.PORTERSTEM_FILTER);
     }
     TokenStream tStream_bow = tokenizer_bow.getTokenStream();
-    //////////////
+    //
     
     TokenStream tStream = tokenizer.getTokenStream();
     HashMap<String, Integer> termVector = new HashMap<>();
@@ -178,7 +178,7 @@ public class Model {
           termVector.put(term, 1);
         }
       }
-      ///////
+      //
       
       DocVector docVector = new DocVector();
       docVector.setTermFreqVector(termVector);
@@ -190,6 +190,9 @@ public class Model {
   }
 
   public static float computeCosineSimilarity(DocVector docVector) {
+    if(docVector == null)
+      return 0.0f;
+    
     float scores[] = new float[docVectors.size()];
     int i=0;
     float maxScore = 0;

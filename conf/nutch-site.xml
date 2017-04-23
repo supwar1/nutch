@@ -65,7 +65,7 @@
 <!-- minimum score -->
 <property>
   <name>generate.min.score</name>
-  <value>0.00000001</value>
+  <value>0.00000000001</value>
 </property>
 
 <!-- link structure -->

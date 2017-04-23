@@ -75,20 +75,18 @@ public class SimilarityScoringFilter extends AbstractScoringFilter {
     return datum.getScore();
   }
   
-  /** Increase the score by a sum of inlinked scores. */
-//  public void updateDbScore(Text url, CrawlDatum old, CrawlDatum datum,
-//      List<CrawlDatum> inlinked) throws ScoringFilterException {
-//    float adjust = 0.0f;
-//    for (int i = 0; i < inlinked.size(); i++) {
-//      CrawlDatum linked = inlinked.get(i);
-//      if(linked.getScore() > adjust)
-//         adjust = linked.getScore();
-//    }
-//    if (old == null)
-//      old = datum;
-//    
-//    if(old.getScore() > adjust)
-//      adjust = old.getScore();
-//    datum.setScore(adjust);
-//  }
+  /** Increase the score by a max of inlinked scores. */
+  public void updateDbScore(Text url, CrawlDatum old, CrawlDatum datum,
+      List<CrawlDatum> inlinked) throws ScoringFilterException {
+    float adjust = 0.0f;
+    for (int i = 0; i < inlinked.size(); i++) {
+      CrawlDatum linked = inlinked.get(i);    
+         adjust += linked.getScore();
+    }
+    if (old == null)
+      old = datum;
+   
+    adjust = adjust + old.getScore();
+    datum.setScore((adjust/inlinked.size()+1));
+  }
 }

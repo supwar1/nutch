@@ -156,35 +156,7 @@ public class BasicIndexingFilter implements IndexingFilter {
     
     // add score
     doc.add("nutch_score", datum.getScore());
-    
-//    BufferedWriter bw = null;
-//    FileWriter fw = null;
-//    
-//    try{
-//    File file = new File("/Users/yjiang/Documents/test.txt");
-//    if(!file.exists())
-//    {
-//      file.createNewFile();
-//    }
-//    fw = new FileWriter(file.getAbsolutePath(), true);
-//    bw = new BufferedWriter(fw);
-//    
-//    bw.write("1");
-//    } catch(IOException e)
-//    {
-//      e.printStackTrace();
-//    }finally{
-//      try{
-//        if(bw!=null)
-//          bw.close();
-//        if(fw!=null)
-//          fw.close();
-//         } catch (IOException ex){
-//           ex.printStackTrace();
-//         }
-//    }
- 
-    
+      
     return doc;
   }
 

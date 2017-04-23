@@ -3,7 +3,6 @@ asteroid belt,3
 asteroid,3
 near earth,3
 asteroid redirect mission,3
-earth,3
 asteroid split,3
 nasa space station,3
 center solar,3

@@ -25,6 +25,7 @@ import org.apache.hadoop.io.Text;
 import org.apache.hadoop.util.StringUtils;
 import org.apache.nutch.crawl.CrawlDatum;
 import org.apache.nutch.metadata.Nutch;
+import org.apache.nutch.parse.Outlink;
 import org.apache.nutch.parse.Parse;
 import org.apache.nutch.parse.ParseData;
 import org.apache.nutch.protocol.Content;
@@ -98,14 +99,22 @@ public class CosineSimilarity implements SimilarityModel{
     int[] ngramArr = Model.retrieveNgrams(conf);
     int mingram = ngramArr[0];
     int maxgram = ngramArr[1];
+    Outlink[] outlinks = parseData.getOutlinks();
     for (Entry<Text, CrawlDatum> target : targets) {
-      String toUrl = target.getKey().toString().replace("/", " ").replace(".", " ");
-      DocVector urlVector;
-      if(toUrl == null)
-        toUrl = "";
-      urlVector = Model.createDocVector(toUrl, mingram, maxgram);
-      if(Model.computeCosineSimilarity(urlVector)==0)
-        score = score/2;
+      String toUrl = target.getKey().toString();
+      String toUrl_str = toUrl.replace("/", " ").replace(".", " ");
+      String to_anchor = "";     
+      for(Outlink out:outlinks)
+      {
+        if(out.getToUrl().equals(toUrl))
+          to_anchor = out.getAnchor();         
+      }
+      DocVector urlVector = Model.createDocVector(toUrl_str, mingram, maxgram);
+      DocVector anchorVector = Model.createDocVector(to_anchor, mingram, maxgram);
+      float ep = 0.00000000001f;
+      if(Model.computeCosineSimilarity(urlVector) < ep && 
+          Model.computeCosineSimilarity(anchorVector) < ep)
+        score = score/3;
 
       target.getValue().setScore(score);
     }
