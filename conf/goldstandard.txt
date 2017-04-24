@@ -13,7 +13,7 @@ neowis,3
 dart,3
 sbag,3
 meteorit,3
-osiris-rex
+osiris-rex,3
 asteroid vesta,3
 new asteroid,3
 neat msss,3
