@@ -1,4 +1,6 @@
 planetari,3
+planetarydefens,3
+planetari defens,3
 asteroid belt,3
 asteroid,3
 near earth,3
@@ -7,7 +9,11 @@ asteroid split,3
 nasa space station,3
 center solar,3
 neo grant,3
+neowis,3
+dart,3
+sbag,3
 meteorit,3
+osiris-rex
 asteroid vesta,3
 new asteroid,3
 neat msss,3
@@ -21,6 +27,7 @@ killer asteroid threat,3
 neo,3
 near earth object,3
 asteroid impact,3
+small bodi assess group,3
 asteroid may,3
 small asteroid,3
 earth asteroid,3
@@ -44,6 +51,7 @@ giant asteroid,3
 esa asteroid micro lander,3
 ida dactyl,3
 iau,3
+bennu,3
 neo mitig,3
 nasa deep space network,3
 nasa asteroid sampler,3
@@ -59,7 +67,6 @@ comet asteroid,2
 impact last alert system,2
 kuiper belt,2
 space pioneer act,2
-bennu,2
 space,2
 asteroid track,2
 solar system,2

@@ -67,26 +67,26 @@ public class SimilarityScoringFilter extends AbstractScoringFilter {
     similarityModel.distributeScoreToOutlinks(fromUrl, parseData, targets, adjust, allCount);
     return adjust;
   }
-  
+
   //added by Cody
   @Override
   public float generatorSortValue(Text url, CrawlDatum datum, float initSort)
       throws ScoringFilterException {
-    return datum.getScore();
+    return datum.getScore() * initSort;  
   }
-  
+
   /** Increase the score by a max of inlinked scores. */
   public void updateDbScore(Text url, CrawlDatum old, CrawlDatum datum,
       List<CrawlDatum> inlinked) throws ScoringFilterException {
     float adjust = 0.0f;
     for (int i = 0; i < inlinked.size(); i++) {
       CrawlDatum linked = inlinked.get(i);    
-         adjust += linked.getScore();
+      adjust += linked.getScore();
     }
     if (old == null)
       old = datum;
-   
+
     adjust = adjust + old.getScore();
-    datum.setScore((adjust/inlinked.size()+1));
+    datum.setScore(adjust/(inlinked.size()+1));
   }
 }

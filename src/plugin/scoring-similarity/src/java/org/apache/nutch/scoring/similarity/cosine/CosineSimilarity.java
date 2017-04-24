@@ -52,7 +52,7 @@ public class CosineSimilarity implements SimilarityModel{
       if(!Model.isModelCreated){
         Model.createModel(conf);
       }
-      
+
       int[] ngramArr = Model.retrieveNgrams(conf);
       int mingram = ngramArr[0];
       int maxgram = ngramArr[1];
@@ -67,18 +67,18 @@ public class CosineSimilarity implements SimilarityModel{
       //create url vector      
       String url_str = url.toString().replace("/", " ").replace(".", " ");
       DocVector urlVector = Model.createDocVector(url_str, mingram, maxgram);
-      
+
       //field length norm, plus 1 smoothing
       if(docVector!=null && titleVector!=null && urlVector!=null){
         int a = 100;
         float title_w = (float) (a/Math.sqrt(titleVector.termFreqVector.size() + 1));
         float url_w = (float) (a/Math.sqrt(urlVector.termFreqVector.size() + 1));
         float doc_w = (float) (a/Math.sqrt(docVector.termFreqVector.size() + 1));
-        
+
         //the cosineSimilarity function has been changed (denominator removed)
         score = title_w*Model.computeCosineSimilarity(titleVector) + 
-                url_w*Model.computeCosineSimilarity(urlVector) +
-                doc_w*Model.computeCosineSimilarity(docVector);
+            url_w*Model.computeCosineSimilarity(urlVector) +
+            doc_w*Model.computeCosineSimilarity(docVector);
         LOG.info("Setting score of {} to {}",url, score);
       }
       else {
@@ -95,28 +95,34 @@ public class CosineSimilarity implements SimilarityModel{
       Collection<Entry<Text, CrawlDatum>> targets, CrawlDatum adjust,
       int allCount) {
     float score = Float.parseFloat(parseData.getContentMeta().get(Nutch.SCORE_KEY));
-    
+
     int[] ngramArr = Model.retrieveNgrams(conf);
     int mingram = ngramArr[0];
     int maxgram = ngramArr[1];
     Outlink[] outlinks = parseData.getOutlinks();
     for (Entry<Text, CrawlDatum> target : targets) {
-      String toUrl = target.getKey().toString();
-      String toUrl_str = toUrl.replace("/", " ").replace(".", " ");
-      String to_anchor = "";     
-      for(Outlink out:outlinks)
-      {
-        if(out.getToUrl().equals(toUrl))
-          to_anchor = out.getAnchor();         
-      }
-      DocVector urlVector = Model.createDocVector(toUrl_str, mingram, maxgram);
-      DocVector anchorVector = Model.createDocVector(to_anchor, mingram, maxgram);
-      float ep = 0.00000000001f;
-      if(Model.computeCosineSimilarity(urlVector) < ep && 
-          Model.computeCosineSimilarity(anchorVector) < ep)
-        score = score/3;
+      try{
+        String toUrl = target.getKey().toString();
+        String toUrl_str = toUrl.replace("/", " ").replace(".", " ");
+        String to_anchor = "";     
+        for(Outlink out:outlinks)
+        {
+          if(out.getToUrl().equals(toUrl))
+          {
+            to_anchor = out.getAnchor();
+          }
+        }
+        DocVector urlVector = Model.createDocVector(toUrl_str, mingram, maxgram);
+        DocVector anchorVector = Model.createDocVector(to_anchor, mingram, maxgram);
+        float ep = 0.00000000001f;
+        if(Model.computeCosineSimilarity(urlVector) < ep && 
+            Model.computeCosineSimilarity(anchorVector) < ep)
+          score = score/3;
 
-      target.getValue().setScore(score);
+        target.getValue().setScore(score);
+      }catch (Exception e) {
+        LOG.error("Error: ", e);
+      }
     }
     return adjust;
   }
