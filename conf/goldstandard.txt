@@ -1,4 +1,3 @@
-planetari,3
 planetarydefens,3
 planetari defens,3
 asteroid belt,3
@@ -95,7 +94,6 @@ new millennium,2
 dawn probe,2
 asteroid video,2
 nasa spacecraft,2
-astronomi,2
 asteroid blast hit russia,2
 asteroid earth,2
 mm spacecraft,2
@@ -222,7 +220,6 @@ solar system data,1
 human mission asteroid,1
 crucial next wave space,1
 solar wind,1
-astronaut sleep,1
 detect track,1
 nasa juno,1
 asteroid today,1

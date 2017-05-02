@@ -75,6 +75,7 @@ public class OPICScoringFilter implements ScoringFilter {
 
   public void injectedScore(Text url, CrawlDatum datum)
       throws ScoringFilterException {
+    // the datum.setScore(scoreInjected) is done in injector class
   }
 
   /**
@@ -83,6 +84,7 @@ public class OPICScoringFilter implements ScoringFilter {
    */
   public void initialScore(Text url, CrawlDatum datum)
       throws ScoringFilterException {
+    // invoked before distributeToOutlinks in the parse step. Another invoke happens  during updateDB
     datum.setScore(0.0f);
   }
 
