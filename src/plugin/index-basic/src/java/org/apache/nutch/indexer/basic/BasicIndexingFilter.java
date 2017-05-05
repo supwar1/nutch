@@ -154,8 +154,11 @@ public class BasicIndexingFilter implements IndexingFilter {
     doc.add("anchor_outlinks", anchor_outlinks);
     doc.add("url_outlinks", outlink_urls);
     
-    // add score
+    // add similarity score
     doc.add("nutch_score", datum.getScore());
+    
+    // add similarity score
+    doc.add("nutch_opic_score", datum.getOpicScore());
       
     return doc;
   }

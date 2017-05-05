@@ -35,6 +35,8 @@ public interface Nutch {
 	public static final String SEGMENT_NAME_KEY = "nutch.segment.name";
 
 	public static final String SCORE_KEY = "nutch.crawl.score";
+	
+	public static final String OPIC_SCORE_KEY = "nutch.crawl.opic.score";
 
 	public static final String GENERATE_TIME_KEY = "_ngt_";
 

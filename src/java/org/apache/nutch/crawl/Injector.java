@@ -201,6 +201,7 @@ public class Injector extends NutchTool implements Tool {
           datum.setStatus(CrawlDatum.STATUS_INJECTED);
           datum.setFetchTime(curTime);
           datum.setScore(scoreInjected);
+          datum.setOpicScore(scoreInjected);
           datum.setFetchInterval(interval);
 
           String metadata = value.toString().trim();

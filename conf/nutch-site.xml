@@ -40,7 +40,7 @@
 
 <property>
   <name>plugin.includes</name>
-  <value>protocol-http|urlfilter-regex|parse-(tika)|index-(anchor|basic|more|static|replace|links)|indexer-elastic|urlnormalizer-basic|scoring-opic|language-identifier|protocol-httpclient</value>
+  <value>protocol-http|urlfilter-regex|parse-(tika)|index-(anchor|basic|more|static|replace|links)|indexer-elastic|urlnormalizer-basic|scoring-(opic|similarity)|language-identifier|protocol-httpclient</value>
 </property>
 
 <property>

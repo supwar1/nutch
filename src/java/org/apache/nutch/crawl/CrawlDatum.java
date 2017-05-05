@@ -126,6 +126,7 @@ public class CrawlDatum implements WritableComparable<CrawlDatum>, Cloneable {
   private byte retries;
   private int fetchInterval;
   private float score = 0.0f;
+  private float score_opic = 0.0f;
   private byte[] signature = null;
   private long modifiedTime;
   private org.apache.hadoop.io.MapWritable metaData;
@@ -226,6 +227,14 @@ public class CrawlDatum implements WritableComparable<CrawlDatum>, Cloneable {
   public void setScore(float score) {
     this.score = score;
   }
+  
+  public float getOpicScore() {
+    return score_opic;
+  }
+
+  public void setOpicScore(float score) {
+    this.score_opic = score;
+  }
 
   public byte[] getSignature() {
     return signature;
@@ -288,6 +297,7 @@ public class CrawlDatum implements WritableComparable<CrawlDatum>, Cloneable {
     } else
       fetchInterval = Math.round(in.readFloat());
     score = in.readFloat();
+    score_opic = in.readFloat();
     if (version > 2) {
       modifiedTime = in.readLong();
       int cnt = in.readByte();
@@ -341,6 +351,7 @@ public class CrawlDatum implements WritableComparable<CrawlDatum>, Cloneable {
     out.writeByte(retries);
     out.writeInt(fetchInterval);
     out.writeFloat(score);
+    out.writeFloat(score_opic);
     out.writeLong(modifiedTime);
     if (signature == null) {
       out.writeByte(0);
@@ -363,6 +374,7 @@ public class CrawlDatum implements WritableComparable<CrawlDatum>, Cloneable {
     this.retries = that.retries;
     this.fetchInterval = that.fetchInterval;
     this.score = that.score;
+    this.score_opic = that.score_opic;
     this.modifiedTime = that.modifiedTime;
     this.signature = that.signature;
     if (that.metaData != null) {
