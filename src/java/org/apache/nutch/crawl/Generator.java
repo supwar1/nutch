@@ -209,10 +209,15 @@ public class Generator extends NutchTool implements Tool {
       float sort = 1.0f;
       try {
         sort = scfilters.generatorSortValue(key, crawlDatum, sort);
-        
-        sort = (float) ((Math.sqrt(crawlDatum.getOpicScore() + 0.0001))*crawlDatum.getScore());
+        /* added by cody */
+        if(crawlDatum.getOpicScore() == 0.0f)
+          sort = crawlDatum.getScore();
+        else
+          sort = (float) (Math.sqrt(crawlDatum.getOpicScore())*crawlDatum.getScore());
+       
         LOG.info("similarity score: " + String.valueOf(crawlDatum.getScore()));
-        LOG.info("opic score:" + String.valueOf(crawlDatum.getOpicScore())); //added by Cody
+        LOG.info("opic score:" + String.valueOf(crawlDatum.getOpicScore()));       
+        /* added by cody */
       } catch (ScoringFilterException sfe) {
         if (LOG.isWarnEnabled()) {
           LOG.warn("Couldn't filter generatorSortValue for " + key + ": " + sfe);
