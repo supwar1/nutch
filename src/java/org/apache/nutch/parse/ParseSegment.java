@@ -41,7 +41,6 @@ import java.lang.invoke.MethodHandles;
 import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.Map.Entry;
-import java.util.concurrent.atomic.AtomicReference;
 
 /* Parse content in a segment. */
 public class ParseSegment extends NutchTool implements Tool,
@@ -58,9 +57,6 @@ public class ParseSegment extends NutchTool implements Tool,
   private ParseUtil parseUtil;
 
   private boolean skipTruncated;
-  
-  private static AtomicReference<String> aggregated_text =
-      new AtomicReference<String>("");
 
   public ParseSegment() {
     this(null);
@@ -147,15 +143,6 @@ public class ParseSegment extends NutchTool implements Tool,
           LOG.warn("Error passing score: " + url + ": " + e.getMessage());
         }
       }
-      
-      /*****/
-      String title = parse.getData().getTitle();
-      String p_text = title;      
-      String separator = "";
-      if(!aggregated_text.get().equals(""))
-        separator = "\n";       
-      aggregated_text.set(aggregated_text.get() + separator + p_text);
-      /****/
 
       long end = System.currentTimeMillis();
       LOG.info("Parsed (" + Long.toString(end - start) + "ms):" + url);
@@ -212,10 +199,7 @@ public class ParseSegment extends NutchTool implements Tool,
   public void reduce(Text key, Iterator<Writable> values,
       OutputCollector<Text, Writable> output, Reporter reporter)
       throws IOException {
-	Writable  w = values.next();
-    output.collect(key, w); // collect first value   
-    ParseImpl parse = (ParseImpl)w;
-    //System.out.println(parse.getData().getPrioritedText());
+    output.collect(key, values.next()); // collect first value
   }
 
   public void parse(Path segment) throws IOException {
@@ -283,7 +267,6 @@ public class ParseSegment extends NutchTool implements Tool,
 
     segment = new Path(args[0]);
     parse(segment);
-    System.out.println(aggregated_text.get());
         
     return 0;
   }

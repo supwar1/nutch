@@ -40,7 +40,9 @@ public class DocVector {
     float product = 0;
     for(Map.Entry<String, Integer> entry : termFreqVector.entrySet()) {
       if(docVector.termFreqVector.containsKey(entry.getKey())) {
-        product += docVector.termFreqVector.get(entry.getKey())*entry.getValue();
+        // docVector is usually the goldstandard
+        float rootTermFreq = (float) Math.sqrt(entry.getValue() + 1);
+        product += docVector.termFreqVector.get(entry.getKey())*rootTermFreq;
       }
     }
     return product;

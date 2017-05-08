@@ -210,7 +210,8 @@ public class Generator extends NutchTool implements Tool {
       try {
         sort = scfilters.generatorSortValue(key, crawlDatum, sort);
         
-        LOG.info("similarity score: " + String.valueOf(sort));
+        sort = (float) ((Math.sqrt(crawlDatum.getOpicScore() + 0.0001))*crawlDatum.getScore());
+        LOG.info("similarity score: " + String.valueOf(crawlDatum.getScore()));
         LOG.info("opic score:" + String.valueOf(crawlDatum.getOpicScore())); //added by Cody
       } catch (ScoringFilterException sfe) {
         if (LOG.isWarnEnabled()) {
@@ -260,9 +261,10 @@ public class Generator extends NutchTool implements Tool {
     public void reduce(FloatWritable key, Iterator<SelectorEntry> values,
         OutputCollector<FloatWritable, SelectorEntry> output, Reporter reporter)
         throws IOException {
-
+      //key is the sort float number, not url
       while (values.hasNext()) {
 
+        //limit equals the value of top N
         if (count == limit) {
           // do we have any segments left?
           if (currentsegmentnum < maxNumSegments) {
@@ -343,7 +345,6 @@ public class Generator extends NutchTool implements Tool {
           entry.segnum = new IntWritable(currentsegmentnum);
           segCounts[currentsegmentnum - 1]++;
         }
-
         output.collect(key, entry);
 
         // Count is incremented only when we keep the URL

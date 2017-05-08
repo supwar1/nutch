@@ -117,9 +117,8 @@ public class CosineSimilarity implements SimilarityModel{
         float ep = 0.00000000001f;
         if(Model.computeCosineSimilarity(urlVector) < ep && 
             Model.computeCosineSimilarity(anchorVector) < ep)
-          score = score/3;
+          target.getValue().setScore(score/3);
 
-        target.getValue().setScore(score);
       }catch (Exception e) {
         LOG.error("Error: ", e);
       }

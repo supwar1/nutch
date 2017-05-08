@@ -279,6 +279,9 @@ public class ParseOutputFormat implements OutputFormat<Text, Parse> {
           // compute score contributions and adjustment to the original score
           adjust = scfilters.distributeScoreToOutlinks(key, parseData, targets,
               null, links.length);
+          
+          LOG.info("similarity score: " + String.valueOf(parseData.getContentMeta().get(Nutch.SCORE_KEY)));
+          LOG.info("opic score:" + String.valueOf(parseData.getContentMeta().get(Nutch.OPIC_SCORE_KEY)));
         } catch (ScoringFilterException e) {
           LOG.warn("Cannot distribute score from " + key + ": "
               + e.getMessage());

@@ -202,6 +202,7 @@ public class CrawlDbReducer implements
                 + ", using default: " + e.getMessage());
           }
           result.setScore(0.0f);
+          result.setOpicScore(0.0f);
         }
       }
       break;
@@ -310,6 +311,9 @@ public class CrawlDbReducer implements
 
     try {
       scfilters.updateDbScore(key, oldSet ? old : null, result, linkList);
+      
+      LOG.info("similarity score: " + String.valueOf(result.getScore()));
+      LOG.info("opic score:" + String.valueOf(result.getOpicScore())); //added by Cody
     } catch (Exception e) {
       if (LOG.isWarnEnabled()) {
         LOG.warn("Couldn't update score, key=" + key + ": " + e);
