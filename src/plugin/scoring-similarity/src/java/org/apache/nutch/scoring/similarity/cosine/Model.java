@@ -197,7 +197,8 @@ public class Model {
     int i=0;
     float maxScore = 0;
     for(DocVector corpusDoc : docVectors) {
-      float numerator = docVector.dotProduct(corpusDoc);
+      // the dotProduct function has been revised
+      float numerator = docVector.dotProduct(corpusDoc); 
 //      float denominator = docVector.getL2Norm()*corpusDoc.getL2Norm();
 //      float currentScore = numerator/denominator;
       float currentScore = numerator;
