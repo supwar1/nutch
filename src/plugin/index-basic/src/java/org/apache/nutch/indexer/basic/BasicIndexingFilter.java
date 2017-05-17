@@ -33,10 +33,6 @@ import org.apache.hadoop.io.Text;
 import org.apache.nutch.crawl.CrawlDatum;
 import org.apache.nutch.crawl.Inlinks;
 
-import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
 import java.lang.invoke.MethodHandles;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -148,7 +144,7 @@ public class BasicIndexingFilter implements IndexingFilter {
     for(Outlink out:outlinks)
     {
       anchor_outlinks +=out.getAnchor() + "&&";
-      outlink_urls = out.getToUrl() + "&&&&";
+      outlink_urls += out.getToUrl() + "&&&&";
     }
     
     doc.add("anchor_outlinks", anchor_outlinks);

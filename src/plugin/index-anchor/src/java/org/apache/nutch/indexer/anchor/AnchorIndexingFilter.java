@@ -101,7 +101,7 @@ public class AnchorIndexingFilter implements IndexingFilter {
       while (iterator.hasNext()) {
           Inlink link = iterator.next();
           String linkUrl = link.getFromUrl();
-          inlink_urls = linkUrl + "&&&&";
+          inlink_urls += linkUrl + "&&&&";
       }
       doc.add("url_inlinks", inlink_urls);
     }
