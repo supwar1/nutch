@@ -6,7 +6,7 @@
 <configuration>
 <property>
  <name>http.agent.name</name>
- <value>pdcrawler</value>
+ <value>planetarydefenseproject</value>
 </property>
 
 <property>
@@ -38,6 +38,7 @@
    <value>/Users/yjiang/Documents/workspace/nutch/build/plugins</value>
  </property>
 
+<!--the order of opic and similarity is important-->
 <property>
   <name>plugin.includes</name>
   <value>protocol-http|urlfilter-regex|parse-(tika)|index-(anchor|basic|more|static|replace|links)|indexer-elastic|urlnormalizer-basic|scoring-(opic|similarity)|language-identifier|protocol-httpclient</value>
