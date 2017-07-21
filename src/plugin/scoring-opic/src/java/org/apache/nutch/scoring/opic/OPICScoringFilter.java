@@ -85,7 +85,8 @@ public class OPICScoringFilter implements ScoringFilter {
   public void initialScore(Text url, CrawlDatum datum)
       throws ScoringFilterException {
     // invoked before distributeToOutlinks in the parse step. Another invoke happens  during updateDB
-    datum.setOpicScore(0.0f);
+    //datum.setOpicScore(0.0f);
+    datum.setOpicScore(1.0f);
   }
 
   /** Use {@link CrawlDatum#getScore()}. */

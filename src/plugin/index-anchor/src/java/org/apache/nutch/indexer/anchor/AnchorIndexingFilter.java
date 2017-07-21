@@ -87,24 +87,19 @@ public class AnchorIndexingFilter implements IndexingFilter {
       CrawlDatum datum, Inlinks inlinks) throws IndexingException {
 
     String[] anchors = (inlinks != null ? inlinks.getAnchors() : new String[0]);
+    String[] urls = (inlinks != null ? inlinks.getInlinkURLs() : new String[0]);
 
     String anchor_inlinks = "";
     String inlink_urls = "";
     for (int i = 0; i < anchors.length; i++) {
       anchor_inlinks += anchors[i] + "&&";
     }
-    doc.add("anchor_inlinks", anchor_inlinks); //need to be changed
     
-    if (null != inlinks) {
-      Iterator<Inlink> iterator = inlinks.iterator();
-
-      while (iterator.hasNext()) {
-          Inlink link = iterator.next();
-          String linkUrl = link.getFromUrl();
-          inlink_urls += linkUrl + "&&&&";
-      }
-      doc.add("url_inlinks", inlink_urls);
+    for (int i = 0; i < urls.length; i++) {
+      inlink_urls += urls[i] + "&&&&";
     }
+    doc.add("anchor_inlinks", anchor_inlinks); //need to be changed
+    doc.add("url_inlinks", inlink_urls);
     
     return doc;
   }

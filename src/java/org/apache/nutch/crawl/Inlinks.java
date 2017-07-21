@@ -106,5 +106,34 @@ public class Inlinks implements Writable {
 
     return results.toArray(new String[results.size()]);
   }
+  
+  /**
+   * Return the set of anchor texts. Only a single anchor with a given text is
+   * permitted from a given domain.
+   */
+  public String[] getInlinkURLs() {
+    HashMap<String, Set<String>> domainToAnchors = new HashMap<>();
+    ArrayList<String> results = new ArrayList<>();
+    Iterator<Inlink> it = inlinks.iterator();
+    while (it.hasNext()) {
+      Inlink inlink = it.next();
+
+      String domain = null; // extract domain name
+      try {
+        domain = new URL(inlink.getFromUrl()).getHost();
+      } catch (MalformedURLException e) {
+      }
+      Set<String> domainAnchors = domainToAnchors.get(domain);
+      if (domainAnchors == null) {
+        domainAnchors = new HashSet<>();
+        domainToAnchors.put(domain, domainAnchors);
+      }
+      if (domainAnchors.add(inlink.getFromUrl())) { // new anchor from domain
+        results.add(inlink.getFromUrl()); // collect it
+      }
+    }
+
+    return results.toArray(new String[results.size()]);
+  }
 
 }

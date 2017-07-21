@@ -6,7 +6,7 @@
 <configuration>
 <property>
  <name>http.agent.name</name>
- <value>planetarydefenseproject</value>
+ <value>pdprojectnasa</value>
 </property>
 
 <property>
@@ -103,6 +103,17 @@
     as a delay between successive requests to the same server instead 
     of fetcher.server.delay.
    </description>
+</property>
+
+
+<!--urlfilter and language can both be done at generate map method-->
+<property>
+  <name>http.accept.language</name>
+  <value>en-us,en-gb,en</value>
+  <description>Value of the "Accept-Language" request header field.
+  This allows selecting non-English language as default one to retrieve.
+  It is a useful setting for search engines build for certain national group.
+  </description>
 </property>
 
 
