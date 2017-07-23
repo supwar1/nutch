@@ -181,7 +181,7 @@ public class Generator extends NutchTool implements Tool {
         // If filtering is on don't generate URLs that don't pass
         // URLFilters
         try {
-          if (filters.filter(url.toString()) == null)
+          if (filters.filter(url.toString()) == null || url.toString().toLowerCase().contains("wikipedia"))
             return;
         } catch (URLFilterException e) {
           if (LOG.isWarnEnabled()) {
@@ -210,10 +210,12 @@ public class Generator extends NutchTool implements Tool {
       try {
         sort = scfilters.generatorSortValue(key, crawlDatum, sort);
         /* added by cody */
-        if(crawlDatum.getOpicScore() == 0.0f)
-          sort = crawlDatum.getScore();
-        else
-          sort = (float) (Math.sqrt(crawlDatum.getOpicScore())*crawlDatum.getScore());
+//        if(crawlDatum.getOpicScore() == 0.0f)
+//          sort = crawlDatum.getScore();
+//        else
+        //opic score can never be 0 as the inistial score has been set to 1
+        //even when initial score is not set to 1, squre root of opic + 1 would be a better approach
+        sort = (float) (Math.sqrt(crawlDatum.getOpicScore())*crawlDatum.getScore());
        
         LOG.info("similarity score: " + String.valueOf(crawlDatum.getScore()));
         LOG.info("opic score:" + String.valueOf(crawlDatum.getOpicScore()));       

@@ -107,6 +107,7 @@
 
 
 <!--urlfilter and language can both be done at generate map method-->
+<!--the value of nutch default has also been changed-->
 <property>
   <name>http.accept.language</name>
   <value>en-us,en-gb,en</value>

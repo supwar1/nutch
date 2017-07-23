@@ -126,7 +126,8 @@ public class OPICScoringFilter implements ScoringFilter {
   public CrawlDatum distributeScoreToOutlinks(Text fromUrl,
       ParseData parseData, Collection<Entry<Text, CrawlDatum>> targets,
       CrawlDatum adjust, int allCount) throws ScoringFilterException {
-    float score = scoreInjected;
+    //float score = scoreInjected;
+    float score = 1.0f;
     String scoreString = parseData.getContentMeta().get(Nutch.OPIC_SCORE_KEY);
     if (scoreString != null) {
       try {
