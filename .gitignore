@@ -19,3 +19,4 @@ hadoop.log.*
 
 !conf/nutch-site.xml
 !conf/goldstandard.txt
+!conf/regex-urlfilter.txt

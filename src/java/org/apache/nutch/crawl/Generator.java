@@ -181,7 +181,8 @@ public class Generator extends NutchTool implements Tool {
         // If filtering is on don't generate URLs that don't pass
         // URLFilters
         try {
-          if (filters.filter(url.toString()) == null || url.toString().toLowerCase().contains("wikipedia"))
+          //if (filters.filter(url.toString()) == null || url.toString().toLowerCase().contains("wikipedia"))
+          if (filters.filter(url.toString()) == null)
             return;
         } catch (URLFilterException e) {
           if (LOG.isWarnEnabled()) {
