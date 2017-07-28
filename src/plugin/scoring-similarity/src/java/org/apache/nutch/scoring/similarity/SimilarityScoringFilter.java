@@ -23,7 +23,9 @@ import java.util.Map.Entry;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.io.Text;
 import org.apache.nutch.crawl.CrawlDatum;
+import org.apache.nutch.metadata.Metadata;
 import org.apache.nutch.metadata.Nutch;
+import org.apache.nutch.net.protocols.Response;
 import org.apache.nutch.parse.Parse;
 import org.apache.nutch.parse.ParseData;
 import org.apache.nutch.protocol.Content;
@@ -54,10 +56,29 @@ public class SimilarityScoringFilter extends AbstractScoringFilter {
   @Override
   public void passScoreAfterParsing(Text url, Content content, Parse parse)
       throws ScoringFilterException {
+    
+    // check if LANGUAGE found, possibly put there by HTMLLanguageParser
+    String lang = parse.getData().getParseMeta().get(Metadata.LANGUAGE);
 
-    float score = similarityModel.setURLScoreAfterParsing(url, content, parse);
-    parse.getData().getContentMeta()
-    .set(Nutch.SCORE_KEY, score+"");
+    // check if HTTP-header tels us the language
+    if (lang == null) {
+      lang = parse.getData().getContentMeta().get(Response.CONTENT_LANGUAGE);
+    }
+
+    if (lang == null || lang.length() == 0) {
+      lang = "unknown";
+    }
+
+    if(lang.contains("en"))
+    {
+      float score = similarityModel.setURLScoreAfterParsing(url, content, parse);
+      parse.getData().getContentMeta()
+      .set(Nutch.SCORE_KEY, score+"");
+    }
+    else{
+      parse.getData().getContentMeta()
+      .set(Nutch.SCORE_KEY, 0.0f+"");
+    }
   }
 
   @Override

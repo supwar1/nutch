@@ -33,7 +33,9 @@ import org.apache.hadoop.io.Text;
 import org.apache.nutch.crawl.CrawlDatum;
 import org.apache.nutch.crawl.Inlinks;
 import org.apache.nutch.indexer.NutchDocument;
+import org.apache.nutch.metadata.Metadata;
 import org.apache.nutch.metadata.Nutch;
+import org.apache.nutch.net.protocols.Response;
 import org.apache.nutch.parse.Parse;
 import org.apache.nutch.parse.ParseData;
 import org.apache.nutch.protocol.Content;
@@ -114,9 +116,26 @@ public class OPICScoringFilter implements ScoringFilter {
   }
 
   /** Copy the value from Content metadata under Fetcher.SCORE_KEY to parseData. */
-  public void passScoreAfterParsing(Text url, Content content, Parse parse) {
-    parse.getData().getContentMeta()
-        .set(Nutch.OPIC_SCORE_KEY, content.getMetadata().get(Nutch.OPIC_SCORE_KEY));
+  public void passScoreAfterParsing(Text url, Content content, Parse parse) {  
+    // check if LANGUAGE found, possibly put there by HTMLLanguageParser
+    String lang = parse.getData().getParseMeta().get(Metadata.LANGUAGE);
+
+    // check if HTTP-header tels us the language
+    if (lang == null) {
+      lang = parse.getData().getContentMeta().get(Response.CONTENT_LANGUAGE);
+    }
+
+    if (lang == null || lang.length() == 0) {
+      lang = "unknown";
+    }
+    
+    if(lang.contains("en"))
+      parse.getData().getContentMeta()
+      .set(Nutch.OPIC_SCORE_KEY, content.getMetadata().get(Nutch.OPIC_SCORE_KEY));
+    else
+      parse.getData().getContentMeta()
+      .set(Nutch.OPIC_SCORE_KEY, "" + 0.0f);
+    
   }
 
   /**
