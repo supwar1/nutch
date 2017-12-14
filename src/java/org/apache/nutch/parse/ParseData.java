@@ -46,6 +46,7 @@ public final class ParseData extends VersionedWritable {
   private Metadata parseMeta;
   private ParseStatus status;
   private byte version = VERSION;
+  private String p_text;
 
   public ParseData() {
     contentMeta = new Metadata();
@@ -98,6 +99,10 @@ public final class ParseData extends VersionedWritable {
   public Metadata getParseMeta() {
     return parseMeta;
   }
+  
+  public String getPrioritedText() {
+	return p_text;
+  }
 
   public void setParseMeta(Metadata parseMeta) {
     this.parseMeta = parseMeta;
@@ -105,6 +110,10 @@ public final class ParseData extends VersionedWritable {
 
   public void setOutlinks(Outlink[] outlinks) {
     this.outlinks = outlinks;
+  }
+  
+  public void setPrioritedText(String str) {
+	this.p_text = str;
   }
 
   /**
@@ -229,9 +238,8 @@ public final class ParseData extends VersionedWritable {
     GenericOptionsParser parser = new GenericOptionsParser(conf, opts, argv);
 
     String[] remainingArgs = parser.getRemainingArgs();
-    FileSystem fs = FileSystem.get(conf);
 
-    try {
+    try (FileSystem fs = FileSystem.get(conf)) {
       int recno = Integer.parseInt(remainingArgs[0]);
       String segment = remainingArgs[1];
 
@@ -247,8 +255,6 @@ public final class ParseData extends VersionedWritable {
       System.out.println(parseDatum);
 
       parses.close();
-    } finally {
-      fs.close();
     }
   }
 

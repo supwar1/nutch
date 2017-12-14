@@ -18,6 +18,7 @@
 package org.apache.nutch.crawl;
 
 import java.io.*;
+import java.lang.invoke.MethodHandles;
 import java.net.*;
 import java.util.*;
 import java.text.*;
@@ -59,7 +60,8 @@ import org.apache.nutch.util.URLUtil;
  **/
 public class Generator extends NutchTool implements Tool {
 
-  public static final Logger LOG = LoggerFactory.getLogger(Generator.class);
+  protected static final Logger LOG = LoggerFactory
+      .getLogger(MethodHandles.lookup().lookupClass());
 
   public static final String GENERATE_UPDATE_CRAWLDB = "generate.update.crawldb";
   public static final String GENERATOR_MIN_SCORE = "generate.min.score";
@@ -115,7 +117,7 @@ public class Generator extends NutchTool implements Tool {
     private long curTime;
     private long limit;
     private long count;
-    private HashMap<String, int[]> hostCounts = new HashMap<String, int[]>();
+    private HashMap<String, int[]> hostCounts = new HashMap<>();
     private int segCounts[];
     private int maxCount;
     private boolean byDomain = false;
@@ -179,6 +181,7 @@ public class Generator extends NutchTool implements Tool {
         // If filtering is on don't generate URLs that don't pass
         // URLFilters
         try {
+          //if (filters.filter(url.toString()) == null || url.toString().toLowerCase().contains("wikipedia"))
           if (filters.filter(url.toString()) == null)
             return;
         } catch (URLFilterException e) {
@@ -207,6 +210,17 @@ public class Generator extends NutchTool implements Tool {
       float sort = 1.0f;
       try {
         sort = scfilters.generatorSortValue(key, crawlDatum, sort);
+        /* added by cody */
+//        if(crawlDatum.getOpicScore() == 0.0f)
+//          sort = crawlDatum.getScore();
+//        else
+        //opic score can never be 0 as the inistial score has been set to 1
+        //even when initial score is not set to 1, squre root of opic + 1 would be a better approach
+        sort = (float) (Math.sqrt(crawlDatum.getOpicScore())*crawlDatum.getScore());
+       
+        LOG.info("similarity score: " + String.valueOf(crawlDatum.getScore()));
+        LOG.info("opic score:" + String.valueOf(crawlDatum.getOpicScore()));       
+        /* added by cody */
       } catch (ScoringFilterException sfe) {
         if (LOG.isWarnEnabled()) {
           LOG.warn("Couldn't filter generatorSortValue for " + key + ": " + sfe);
@@ -224,7 +238,7 @@ public class Generator extends NutchTool implements Tool {
           && !restrictStatus.equalsIgnoreCase(CrawlDatum
               .getStatusName(crawlDatum.getStatus())))
         return;
-
+      
       // consider only entries with a score superior to the threshold
       if (scoreThreshold != Float.NaN && sort < scoreThreshold)
         return;
@@ -255,9 +269,10 @@ public class Generator extends NutchTool implements Tool {
     public void reduce(FloatWritable key, Iterator<SelectorEntry> values,
         OutputCollector<FloatWritable, SelectorEntry> output, Reporter reporter)
         throws IOException {
-
+      //key is the sort float number, not url
       while (values.hasNext()) {
 
+        //limit equals the value of top N
         if (count == limit) {
           // do we have any segments left?
           if (currentsegmentnum < maxNumSegments) {
@@ -338,7 +353,6 @@ public class Generator extends NutchTool implements Tool {
           entry.segnum = new IntWritable(currentsegmentnum);
           segCounts[currentsegmentnum - 1]++;
         }
-
         output.collect(key, entry);
 
         // Count is incremented only when we keep the URL
@@ -595,7 +609,7 @@ public class Generator extends NutchTool implements Tool {
 
     // read the subdirectories generated in the temp
     // output and turn them into segments
-    List<Path> generatedSegments = new ArrayList<Path>();
+    List<Path> generatedSegments = new ArrayList<>();
 
     FileStatus[] status = fs.listStatus(tempDir);
     try {
@@ -775,7 +789,7 @@ public class Generator extends NutchTool implements Tool {
   @Override
   public Map<String, Object> run(Map<String, Object> args, String crawlId) throws Exception {
 
-    Map<String, Object> results = new HashMap<String, Object>();
+    Map<String, Object> results = new HashMap<>();
 
     long curTime = System.currentTimeMillis();
     long topN = Long.MAX_VALUE;

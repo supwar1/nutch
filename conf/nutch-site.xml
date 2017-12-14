@@ -1,0 +1,150 @@
+<?xml version="1.0"?>
+<?xml-stylesheet type="text/xsl" href="configuration.xsl"?>
+
+<!-- Put site-specific property overrides in this file. -->
+
+<configuration>
+<property>
+ <name>http.agent.name</name>
+ <value>pdprojectnasa</value>
+</property>
+
+<property>
+  <name>http.robots.agents</name>
+  <value>pdcrawler,pdspider,pdbot</value>
+  <description>Any other agents, apart from 'http.agent.name', that the robots
+  parser would look for in robots.txt. Multiple agents can be provided using 
+  comma as a delimiter. eg. mybot,foo-spider,bar-crawler
+  
+  The ordering of agents does NOT matter and the robots parser would make 
+  decision based on the agent which matches first to the robots rules.  
+  Also, there is NO need to add a wildcard (ie. "*") to this string as the 
+  robots parser would smartly take care of a no-match situation. 
+    
+  If no value is specified, by default HTTP agent (ie. 'http.agent.name') 
+  would be used for user agent matching by the robots parser. 
+  </description>
+</property>
+
+<property>
+  <name>http.robot.rules.whitelist</name>
+  <value>neo.jpl.nasa.gov,www.minorplanetcenter.net,www.nasa.gov</value>
+  <description>Comma separated list of hostnames or IP addresses to ignore robot rules parsing for.
+  </description>
+</property>
+
+<property>
+   <name>plugin.folders</name>
+   <value>/Users/yjiang/Documents/workspace/nutch/build/plugins</value>
+ </property>
+
+<!--the order of opic and similarity is important-->
+<property>
+  <name>plugin.includes</name>
+  <value>protocol-http|urlfilter-regex|parse-(tika)|index-(anchor|basic|more|static|replace|links)|indexer-elastic|urlnormalizer-basic|scoring-(opic|similarity)|language-identifier|protocol-httpclient</value>
+</property>
+
+<property>
+    <name>cosine.goldstandard.file</name>
+    <value>goldstandard.txt</value>
+</property>
+
+<property>
+    <name>scoring.similarity.stopword.file</name>
+    <value>stopwords.txt</value>
+</property>
+
+<property>
+  <name>scoring.similarity.ngrams</name>
+  <value>2,3</value>
+  <description>Specifies the min 'n' and max 'n' in ngrams as comma-separated.
+    If one value is specified as 'n', it will be used for both the min 'n' and max 'n' in ngrams.
+  </description>
+</property>
+
+
+<!-- minimum score -->
+<property>
+  <name>generate.min.score</name>
+  <value>0.00000000001</value>
+</property>
+
+<!-- link structure -->
+<property>
+  <name>linkdb.ignore.internal.links</name>
+  <value>false</value>
+  <description>If true, when adding new links to a page, links from
+  the same host are ignored.  This is an effective way to limit the
+  size of the link database, keeping only the highest quality
+  links.
+  </description>
+</property> 
+
+
+<!-- performance-->
+<property>
+  <name>fetcher.threads.fetch</name>
+  <value>25</value>
+  <description>The number of FetcherThreads the fetcher should use.
+  This is also determines the maximum number of requests that are
+  made at once (each FetcherThread handles one connection). The total
+  number of threads running in distributed mode will be the number of
+  fetcher threads * number of nodes as fetcher has one map task per node.
+  </description>
+</property>
+
+<property>
+  <name>fetcher.threads.per.queue</name>
+  <value>20</value>
+  <description>This number is the maximum number of threads that
+    should be allowed to access a queue at one time. Setting it to 
+    a value > 1 will cause the Crawl-Delay value from robots.txt to
+    be ignored and the value of fetcher.server.min.delay to be used
+    as a delay between successive requests to the same server instead 
+    of fetcher.server.delay.
+   </description>
+</property>
+
+
+<!--urlfilter and language can both be done at generate map method-->
+<!--the value of nutch default has also been changed-->
+<property>
+  <name>http.accept.language</name>
+  <value>en-us,en-gb,en</value>
+  <description>Value of the "Accept-Language" request header field.
+  This allows selecting non-English language as default one to retrieve.
+  It is a useful setting for search engines build for certain national group.
+  </description>
+</property>
+
+
+<!-- indexing-->
+<property>
+  <name>elastic.host</name>
+  <value>localhost</value>
+  <description>The hostname to send documents to using TransportClient. Either host
+  and port must be defined or cluster.</description>
+</property>
+
+<property>
+  <name>elastic.port</name>
+  <value>9300</value>
+  <description>
+  </description>
+</property>
+
+<property>
+  <name>elastic.cluster</name>
+  <value>elasticsearch</value>
+  <description>The cluster name to discover. Either host and potr must be defined
+  or cluster.</description>
+</property>
+
+<property>
+  <name>elastic.index</name>
+  <value>nutch</value>
+  <description>Default index to send documents to.</description>
+</property>
+
+
+</configuration>

@@ -21,8 +21,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import org.apache.nutch.metadata.Nutch;
+import org.apache.nutch.parse.Outlink;
 import org.apache.nutch.parse.Parse;
-
 import org.apache.nutch.indexer.IndexingFilter;
 import org.apache.nutch.indexer.IndexingException;
 import org.apache.nutch.indexer.NutchDocument;
@@ -33,6 +33,7 @@ import org.apache.hadoop.io.Text;
 import org.apache.nutch.crawl.CrawlDatum;
 import org.apache.nutch.crawl.Inlinks;
 
+import java.lang.invoke.MethodHandles;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Date;
@@ -48,8 +49,8 @@ import org.apache.hadoop.conf.Configuration;
  * {@code indexer.max.content.length} in nutch-default.xml.
  */
 public class BasicIndexingFilter implements IndexingFilter {
-  public static final Logger LOG = LoggerFactory
-      .getLogger(BasicIndexingFilter.class);
+  private static final Logger LOG = LoggerFactory
+      .getLogger(MethodHandles.lookup().lookupClass());
 
   private int MAX_TITLE_LENGTH;
   private int MAX_CONTENT_LENGTH;
@@ -134,7 +135,27 @@ public class BasicIndexingFilter implements IndexingFilter {
 
     // add timestamp when fetched, for deduplication
     doc.add("tstamp", new Date(datum.getFetchTime()));
+    
+    // add anchor text of outlinks, if any
+    Outlink[] outlinks = parse.getData().getOutlinks();
+    String anchor_outlinks = "";
+    String outlink_urls = "";
 
+    for(Outlink out:outlinks)
+    {
+      anchor_outlinks +=out.getAnchor() + "&&";
+      outlink_urls += out.getToUrl() + "&&&&";
+    }
+    
+    doc.add("anchor_outlinks", anchor_outlinks);
+    doc.add("url_outlinks", outlink_urls);
+    
+    // add similarity score
+    doc.add("nutch_score", datum.getScore());
+    
+    // add similarity score
+    doc.add("nutch_opic_score", datum.getOpicScore());
+      
     return doc;
   }
 

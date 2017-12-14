@@ -16,15 +16,22 @@
  */
 package org.apache.nutch.indexer.anchor;
 
+import java.lang.invoke.MethodHandles;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.HashSet;
+import java.util.Iterator;
+import java.util.Set;
 
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.io.Text;
 import org.apache.nutch.crawl.CrawlDatum;
+import org.apache.nutch.crawl.Inlink;
 import org.apache.nutch.crawl.Inlinks;
 import org.apache.nutch.indexer.IndexingException;
 import org.apache.nutch.indexer.IndexingFilter;
 import org.apache.nutch.indexer.NutchDocument;
+import org.apache.nutch.parse.Outlink;
 import org.apache.nutch.parse.Parse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -37,8 +44,8 @@ import org.slf4j.LoggerFactory;
  */
 public class AnchorIndexingFilter implements IndexingFilter {
 
-  public static final Logger LOG = LoggerFactory
-      .getLogger(AnchorIndexingFilter.class);
+  private static final Logger LOG = LoggerFactory
+      .getLogger(MethodHandles.lookup().lookupClass());
   private Configuration conf;
   private boolean deduplicate = false;
 
@@ -80,27 +87,20 @@ public class AnchorIndexingFilter implements IndexingFilter {
       CrawlDatum datum, Inlinks inlinks) throws IndexingException {
 
     String[] anchors = (inlinks != null ? inlinks.getAnchors() : new String[0]);
+    String[] urls = (inlinks != null ? inlinks.getInlinkURLs() : new String[0]);
 
-    HashSet<String> set = null;
-
+    String anchor_inlinks = "";
+    String inlink_urls = "";
     for (int i = 0; i < anchors.length; i++) {
-      if (deduplicate) {
-        if (set == null)
-          set = new HashSet<String>();
-        String lcAnchor = anchors[i].toLowerCase();
-
-        // Check if already processed the current anchor
-        if (!set.contains(lcAnchor)) {
-          doc.add("anchor", anchors[i]);
-
-          // Add to map
-          set.add(lcAnchor);
-        }
-      } else {
-        doc.add("anchor", anchors[i]);
-      }
+      anchor_inlinks += anchors[i] + "&&";
     }
-
+    
+    for (int i = 0; i < urls.length; i++) {
+      inlink_urls += urls[i] + "&&&&";
+    }
+    doc.add("anchor_inlinks", anchor_inlinks); //need to be changed
+    doc.add("url_inlinks", inlink_urls);
+    
     return doc;
   }
 

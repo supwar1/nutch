@@ -16,7 +16,7 @@
  */
 package org.apache.nutch.scoring.similarity.cosine;
 
-import java.io.IOException;
+import java.lang.invoke.MethodHandles;
 import java.util.Collection;
 import java.util.Map.Entry;
 
@@ -25,6 +25,7 @@ import org.apache.hadoop.io.Text;
 import org.apache.hadoop.util.StringUtils;
 import org.apache.nutch.crawl.CrawlDatum;
 import org.apache.nutch.metadata.Nutch;
+import org.apache.nutch.parse.Outlink;
 import org.apache.nutch.parse.Parse;
 import org.apache.nutch.parse.ParseData;
 import org.apache.nutch.protocol.Content;
@@ -34,9 +35,9 @@ import org.slf4j.LoggerFactory;
 
 public class CosineSimilarity implements SimilarityModel{
 
-  private Configuration conf; 
-  private final static Logger LOG = LoggerFactory
-      .getLogger(CosineSimilarity.class);
+  private Configuration conf;
+  private static final Logger LOG = LoggerFactory
+      .getLogger(MethodHandles.lookup().lookupClass());
 
   @Override
   public void setConf(Configuration conf) {
@@ -51,14 +52,33 @@ public class CosineSimilarity implements SimilarityModel{
       if(!Model.isModelCreated){
         Model.createModel(conf);
       }
-      String metatags = parse.getData().getParseMeta().get("metatag.keyword");
-      String metaDescription = parse.getData().getParseMeta().get("metatag.description");
+
       int[] ngramArr = Model.retrieveNgrams(conf);
       int mingram = ngramArr[0];
       int maxgram = ngramArr[1];
-      DocVector docVector = Model.createDocVector(parse.getText()+metaDescription+metatags, mingram, maxgram);
-      if(docVector!=null){
-        score = Model.computeCosineSimilarity(docVector);
+      //extract keyword and description
+      String metatags = parse.getData().getParseMeta().get("metatag.keyword");
+      String metaDescription = " " + parse.getData().getParseMeta().get("metatag.description")+ " ";
+      String doc = parse.getText()+metaDescription+metatags;
+      DocVector docVector = Model.createDocVector(doc, mingram, maxgram);      
+      //create title vector
+      String title = parse.getData().getTitle();      
+      DocVector titleVector = Model.createDocVector(title, mingram, maxgram);
+      //create url vector      
+      String url_str = url.toString().replace("/", " ").replace(".", " ");
+      DocVector urlVector = Model.createDocVector(url_str, mingram, maxgram);
+
+      //field length norm, plus 1 smoothing
+      if(docVector!=null && titleVector!=null && urlVector!=null){
+        int a = 100;
+        float title_w = (float) (a/Math.sqrt(titleVector.termFreqVector.size() + 1));
+        float url_w = (float) (a/Math.sqrt(urlVector.termFreqVector.size() + 1));
+        float doc_w = (float) (a/Math.sqrt(docVector.termFreqVector.size() + 1));
+
+        //the cosineSimilarity function has been changed (denominator removed)
+        score = title_w*Model.computeCosineSimilarity(titleVector) + 
+            url_w*Model.computeCosineSimilarity(urlVector) +
+            doc_w*Model.computeCosineSimilarity(docVector);
         LOG.info("Setting score of {} to {}",url, score);
       }
       else {
@@ -75,8 +95,33 @@ public class CosineSimilarity implements SimilarityModel{
       Collection<Entry<Text, CrawlDatum>> targets, CrawlDatum adjust,
       int allCount) {
     float score = Float.parseFloat(parseData.getContentMeta().get(Nutch.SCORE_KEY));
+
+    int[] ngramArr = Model.retrieveNgrams(conf);
+    int mingram = ngramArr[0];
+    int maxgram = ngramArr[1];
+    Outlink[] outlinks = parseData.getOutlinks();
     for (Entry<Text, CrawlDatum> target : targets) {
-      target.getValue().setScore(score);
+      try{
+        String toUrl = target.getKey().toString();
+        String toUrl_str = toUrl.replace("/", " ").replace(".", " ");
+        String to_anchor = "";     
+        for(Outlink out:outlinks)
+        {
+          if(out.getToUrl().equals(toUrl))
+          {
+            to_anchor = out.getAnchor();
+          }
+        }
+        DocVector urlVector = Model.createDocVector(toUrl_str, mingram, maxgram);
+        DocVector anchorVector = Model.createDocVector(to_anchor, mingram, maxgram);
+        float ep = 0.00000000001f;
+        if(Model.computeCosineSimilarity(urlVector) < ep && 
+            Model.computeCosineSimilarity(anchorVector) < ep)
+          target.getValue().setScore(score/3);
+
+      }catch (Exception e) {
+        LOG.error("Error: ", e);
+      }
     }
     return adjust;
   }

@@ -17,6 +17,7 @@
 
 package org.apache.nutch.scoring.opic;
 
+import java.lang.invoke.MethodHandles;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Collection;
@@ -32,7 +33,9 @@ import org.apache.hadoop.io.Text;
 import org.apache.nutch.crawl.CrawlDatum;
 import org.apache.nutch.crawl.Inlinks;
 import org.apache.nutch.indexer.NutchDocument;
+import org.apache.nutch.metadata.Metadata;
 import org.apache.nutch.metadata.Nutch;
+import org.apache.nutch.net.protocols.Response;
 import org.apache.nutch.parse.Parse;
 import org.apache.nutch.parse.ParseData;
 import org.apache.nutch.protocol.Content;
@@ -50,8 +53,8 @@ import org.apache.nutch.scoring.ScoringFilterException;
  */
 public class OPICScoringFilter implements ScoringFilter {
 
-  private final static Logger LOG = LoggerFactory
-      .getLogger(OPICScoringFilter.class);
+  private static final Logger LOG = LoggerFactory
+      .getLogger(MethodHandles.lookup().lookupClass());
 
   private Configuration conf;
   private float scoreInjected;
@@ -74,6 +77,7 @@ public class OPICScoringFilter implements ScoringFilter {
 
   public void injectedScore(Text url, CrawlDatum datum)
       throws ScoringFilterException {
+    // the datum.setScore(scoreInjected) is done in injector class
   }
 
   /**
@@ -82,13 +86,15 @@ public class OPICScoringFilter implements ScoringFilter {
    */
   public void initialScore(Text url, CrawlDatum datum)
       throws ScoringFilterException {
-    datum.setScore(0.0f);
+    // invoked before distributeToOutlinks in the parse step. Another invoke happens  during updateDB
+    //datum.setOpicScore(0.0f);
+    datum.setOpicScore(1.0f);
   }
 
   /** Use {@link CrawlDatum#getScore()}. */
   public float generatorSortValue(Text url, CrawlDatum datum, float initSort)
       throws ScoringFilterException {
-    return datum.getScore() * initSort;
+    return datum.getOpicScore() * initSort;
   }
 
   /** Increase the score by a sum of inlinked scores. */
@@ -97,22 +103,39 @@ public class OPICScoringFilter implements ScoringFilter {
     float adjust = 0.0f;
     for (int i = 0; i < inlinked.size(); i++) {
       CrawlDatum linked = inlinked.get(i);
-      adjust += linked.getScore();
+      adjust += linked.getOpicScore();
     }
     if (old == null)
       old = datum;
-    datum.setScore(old.getScore() + adjust);
+    datum.setOpicScore(old.getOpicScore() + adjust);
   }
 
   /** Store a float value of CrawlDatum.getScore() under Fetcher.SCORE_KEY. */
   public void passScoreBeforeParsing(Text url, CrawlDatum datum, Content content) {
-    content.getMetadata().set(Nutch.SCORE_KEY, "" + datum.getScore());
+    content.getMetadata().set(Nutch.OPIC_SCORE_KEY, "" + datum.getOpicScore());
   }
 
   /** Copy the value from Content metadata under Fetcher.SCORE_KEY to parseData. */
-  public void passScoreAfterParsing(Text url, Content content, Parse parse) {
-    parse.getData().getContentMeta()
-        .set(Nutch.SCORE_KEY, content.getMetadata().get(Nutch.SCORE_KEY));
+  public void passScoreAfterParsing(Text url, Content content, Parse parse) {  
+    // check if LANGUAGE found, possibly put there by HTMLLanguageParser
+    String lang = parse.getData().getParseMeta().get(Metadata.LANGUAGE);
+
+    // check if HTTP-header tels us the language
+    if (lang == null) {
+      lang = parse.getData().getContentMeta().get(Response.CONTENT_LANGUAGE);
+    }
+
+    if (lang == null || lang.length() == 0) {
+      lang = "unknown";
+    }
+    
+    if(lang.contains("en"))
+      parse.getData().getContentMeta()
+      .set(Nutch.OPIC_SCORE_KEY, content.getMetadata().get(Nutch.OPIC_SCORE_KEY));
+    else
+      parse.getData().getContentMeta()
+      .set(Nutch.OPIC_SCORE_KEY, "" + 0.0f);
+    
   }
 
   /**
@@ -122,8 +145,9 @@ public class OPICScoringFilter implements ScoringFilter {
   public CrawlDatum distributeScoreToOutlinks(Text fromUrl,
       ParseData parseData, Collection<Entry<Text, CrawlDatum>> targets,
       CrawlDatum adjust, int allCount) throws ScoringFilterException {
-    float score = scoreInjected;
-    String scoreString = parseData.getContentMeta().get(Nutch.SCORE_KEY);
+    //float score = scoreInjected;
+    float score = 1.0f;
+    String scoreString = parseData.getContentMeta().get(Nutch.OPIC_SCORE_KEY);
     if (scoreString != null) {
       try {
         score = Float.parseFloat(scoreString);
@@ -149,13 +173,13 @@ public class OPICScoringFilter implements ScoringFilter {
         String toHost = new URL(target.getKey().toString()).getHost();
         String fromHost = new URL(fromUrl.toString()).getHost();
         if (toHost.equalsIgnoreCase(fromHost)) {
-          target.getValue().setScore(internalScore);
+          target.getValue().setOpicScore(internalScore);
         } else {
-          target.getValue().setScore(externalScore);
+          target.getValue().setOpicScore(externalScore);
         }
       } catch (MalformedURLException e) {
         LOG.error("Error: ", e);
-        target.getValue().setScore(externalScore);
+        target.getValue().setOpicScore(externalScore);
       }
     }
     // XXX (ab) no adjustment? I think this is contrary to the algorithm descr.
@@ -168,6 +192,7 @@ public class OPICScoringFilter implements ScoringFilter {
   public float indexerScore(Text url, NutchDocument doc, CrawlDatum dbDatum,
       CrawlDatum fetchDatum, Parse parse, Inlinks inlinks, float initScore)
       throws ScoringFilterException {
-    return (float) Math.pow(dbDatum.getScore(), scorePower) * initScore;
+    //return (float) Math.pow(dbDatum.getOpicScore(), scorePower) * initScore;
+    return initScore;
   }
 }

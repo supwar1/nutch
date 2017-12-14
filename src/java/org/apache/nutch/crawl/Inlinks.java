@@ -25,7 +25,7 @@ import org.apache.hadoop.io.*;
 
 /** A list of {@link Inlink}s. */
 public class Inlinks implements Writable {
-  private HashSet<Inlink> inlinks = new HashSet<Inlink>(1);
+  private HashSet<Inlink> inlinks = new HashSet<>(1);
 
   public void add(Inlink inlink) {
     inlinks.add(inlink);
@@ -80,8 +80,8 @@ public class Inlinks implements Writable {
    * permitted from a given domain.
    */
   public String[] getAnchors() {
-    HashMap<String, Set<String>> domainToAnchors = new HashMap<String, Set<String>>();
-    ArrayList<String> results = new ArrayList<String>();
+    HashMap<String, Set<String>> domainToAnchors = new HashMap<>();
+    ArrayList<String> results = new ArrayList<>();
     Iterator<Inlink> it = inlinks.iterator();
     while (it.hasNext()) {
       Inlink inlink = it.next();
@@ -96,11 +96,40 @@ public class Inlinks implements Writable {
       }
       Set<String> domainAnchors = domainToAnchors.get(domain);
       if (domainAnchors == null) {
-        domainAnchors = new HashSet<String>();
+        domainAnchors = new HashSet<>();
         domainToAnchors.put(domain, domainAnchors);
       }
       if (domainAnchors.add(anchor)) { // new anchor from domain
         results.add(anchor); // collect it
+      }
+    }
+
+    return results.toArray(new String[results.size()]);
+  }
+  
+  /**
+   * Return the set of anchor texts. Only a single anchor with a given text is
+   * permitted from a given domain.
+   */
+  public String[] getInlinkURLs() {
+    HashMap<String, Set<String>> domainToAnchors = new HashMap<>();
+    ArrayList<String> results = new ArrayList<>();
+    Iterator<Inlink> it = inlinks.iterator();
+    while (it.hasNext()) {
+      Inlink inlink = it.next();
+
+      String domain = null; // extract domain name
+      try {
+        domain = new URL(inlink.getFromUrl()).getHost();
+      } catch (MalformedURLException e) {
+      }
+      Set<String> domainAnchors = domainToAnchors.get(domain);
+      if (domainAnchors == null) {
+        domainAnchors = new HashSet<>();
+        domainToAnchors.put(domain, domainAnchors);
+      }
+      if (domainAnchors.add(inlink.getFromUrl())) { // new anchor from domain
+        results.add(inlink.getFromUrl()); // collect it
       }
     }
 

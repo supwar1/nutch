@@ -16,6 +16,7 @@
  */
 package org.apache.nutch.scoring.similarity.cosine;
 
+import java.lang.invoke.MethodHandles;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
@@ -46,8 +47,9 @@ import org.slf4j.LoggerFactory;
 public class Model {
 
   //Currently only one file, but in future could accept a corpus hence an ArrayList
-  public static ArrayList<DocVector> docVectors = new ArrayList<>(); 
-  private static final Logger LOG = LoggerFactory.getLogger(Model.class);
+  public static ArrayList<DocVector> docVectors = new ArrayList<>();
+  private static final Logger LOG = LoggerFactory
+      .getLogger(MethodHandles.lookup().lookupClass());
   public static boolean isModelCreated = false;
   private static List<String> stopWords;
 
@@ -76,17 +78,19 @@ public class Model {
 
       // TODO : Allow for corpus of documents to be provided as gold standard. 
       String line;
-      StringBuilder sb = new StringBuilder();
       BufferedReader br = new BufferedReader(conf.getConfResourceAsReader((conf.get("cosine.goldstandard.file"))));
+      
+      //added by cody, create goldstandard from revised file
+      HashMap<String, Integer> termVector = new HashMap<>();
       while ((line = br.readLine()) != null) {
-        sb.append(line);
+        String[] tuple=line.split(",");
+        termVector.put(tuple[0], Integer.parseInt(tuple[1]));
       }
-      DocVector goldStandard = createDocVector(sb.toString(), mingram, maxgram);
+      DocVector goldStandard = new DocVector();
+      goldStandard.setTermFreqVector(termVector);
+            
       if(goldStandard!=null)
         docVectors.add(goldStandard);
-      else {
-        throw new Exception("Could not create DocVector for goldstandard");
-      }
     } catch (Exception e) {
       LOG.warn("Failed to add {} to model : {}",conf.get("cosine.goldstandard.file","goldstandard.txt.template"), 
           StringUtils.stringifyException(e));
@@ -107,6 +111,9 @@ public class Model {
    * @param maxgram Value of maxgram for tokenizing
    */
   public static DocVector createDocVector(String content, int mingram, int maxgram) {
+    if(content == null || content.equals(""))
+      return null;
+    
     LuceneTokenizer tokenizer;
 
     if(mingram > 1 && maxgram > 1){
@@ -125,6 +132,19 @@ public class Model {
       tokenizer = new LuceneTokenizer(content, TokenizerType.STANDARD, true, 
           StemFilterType.PORTERSTEM_FILTER);
     }
+    
+    //added by cody
+    LuceneTokenizer tokenizer_bow;
+    if(stopWords!=null) {
+      tokenizer_bow = new LuceneTokenizer(content, TokenizerType.STANDARD, stopWords, true, 
+          StemFilterType.PORTERSTEM_FILTER);
+    }else {
+      tokenizer_bow = new LuceneTokenizer(content, TokenizerType.STANDARD, true, 
+          StemFilterType.PORTERSTEM_FILTER);
+    }
+    TokenStream tStream_bow = tokenizer_bow.getTokenStream();
+    //
+    
     TokenStream tStream = tokenizer.getTokenStream();
     HashMap<String, Integer> termVector = new HashMap<>();
     try {
@@ -142,6 +162,24 @@ public class Model {
           termVector.put(term, 1);
         }
       }
+      
+      //add by cody
+      CharTermAttribute charTermAttribute_bow = tStream_bow.addAttribute(CharTermAttribute.class);
+      tStream_bow.reset();
+      while(tStream_bow.incrementToken()) {
+        String term = charTermAttribute_bow.toString();
+        LOG.debug(term);
+        if(termVector.containsKey(term)) {
+          int count = termVector.get(term);
+          count++;
+          termVector.put(term, count);
+        }
+        else {
+          termVector.put(term, 1);
+        }
+      }
+      //
+      
       DocVector docVector = new DocVector();
       docVector.setTermFreqVector(termVector);
       return docVector;
@@ -152,13 +190,18 @@ public class Model {
   }
 
   public static float computeCosineSimilarity(DocVector docVector) {
+    if(docVector == null)
+      return 0.0f;
+    
     float scores[] = new float[docVectors.size()];
     int i=0;
     float maxScore = 0;
     for(DocVector corpusDoc : docVectors) {
-      float numerator = docVector.dotProduct(corpusDoc);
-      float denominator = docVector.getL2Norm()*corpusDoc.getL2Norm();
-      float currentScore = numerator/denominator;
+      // the dotProduct function has been revised
+      float numerator = docVector.dotProduct(corpusDoc); 
+//      float denominator = docVector.getL2Norm()*corpusDoc.getL2Norm();
+//      float currentScore = numerator/denominator;
+      float currentScore = numerator;
       scores[i++] = currentScore;
       maxScore = (currentScore>maxScore)? currentScore : maxScore;
     }

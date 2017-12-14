@@ -19,6 +19,7 @@ package org.apache.nutch.indexwriter.elastic;
 
 import static org.elasticsearch.node.NodeBuilder.nodeBuilder;
 
+import java.lang.invoke.MethodHandles;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.net.InetAddress;
@@ -52,7 +53,8 @@ import org.slf4j.LoggerFactory;
  * Sends NutchDocuments to a configured Elasticsearch index.
  */
 public class ElasticIndexWriter implements IndexWriter {
-  public static Logger LOG = LoggerFactory.getLogger(ElasticIndexWriter.class);
+  private static final Logger LOG = LoggerFactory
+      .getLogger(MethodHandles.lookup().lookupClass());
 
   private static final int DEFAULT_PORT = 9300;
   private static final int DEFAULT_MAX_BULK_DOCS = 250;
@@ -139,9 +141,18 @@ public class ElasticIndexWriter implements IndexWriter {
       node = nodeBuilder().settings(settings).client(true).node();
       client = node.client();
     }
-
+    
+    //added by Yongyao
+//    String mappingJson = "{\r\n  \"_default_\": {\r\n    \"properties\": {\r\n      \"type\": {\r\n        \"type\": \"string\",\r\n        \"index\": \"not_analyzed\"\r\n      }\r\n    }\r\n  }\r\n}";
+//    putMapping(client, defaultIndex, mappingJson);
+    
     return client;
   }
+  
+//  public void putMapping(Client client, String indexName, String mappingJson) throws IOException {
+//    client.admin().indices().preparePutMapping(indexName).setType("_default_").
+//                             setSource(mappingJson).execute().actionGet();
+//  }
 
   /** Generates a default BulkProcessor.Listener */
   protected BulkProcessor.Listener bulkProcessorListener() {
